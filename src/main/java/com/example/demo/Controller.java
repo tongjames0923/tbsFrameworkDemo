@@ -12,6 +12,7 @@ import tbs.framework.base.utils.MultilingualUtil;
 import tbs.framework.timer.AbstractTimer;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -34,13 +35,16 @@ public class Controller {
     @Resource
     AbstractTimer timer;
 
+    @Resource
+    HomeMapper homeMapper;
+
     public Controller(LogUtil util) {
         logger = util.getLogger(Controller.class.getName());
     }
 
     @RequestMapping("/")
-    public String index() throws InterruptedException, ExecutionException, ObtainLockFailException {
-        asyncTest.test1();
-        return "hello world";
+    public List<HomeEntity> index() throws InterruptedException, ExecutionException, ObtainLockFailException {
+
+        return homeMapper.selectAll();
     }
 }
