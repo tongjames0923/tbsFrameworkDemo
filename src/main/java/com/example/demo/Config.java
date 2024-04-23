@@ -3,16 +3,23 @@ package com.example.demo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
+import tbs.framework.auth.interfaces.IErrorHandler;
+import tbs.framework.auth.interfaces.IRuntimeDataExchanger;
 import tbs.framework.auth.interfaces.IUserModelPicker;
+import tbs.framework.auth.interfaces.impls.CopyRuntimeDataExchanger;
+import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
+import tbs.framework.base.log.ILogger;
 import tbs.framework.base.utils.LogUtil;
 import tbs.framework.timer.AbstractTimer;
 import tbs.framework.timer.impls.ScheduledExecutorTimer;
 import tbs.framework.xxl.interfaces.IJsonJobHandler;
 import tbs.framework.xxl.interfaces.IXXLJobsConfig;
 
+import java.time.Duration;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 
 @Configuration
@@ -24,6 +31,38 @@ public class Config {
             Executors.newScheduledThreadPool(12, new CustomizableThreadFactory("timer-thread")), logUtil);
     }
 
+    private static class ResultExchanger extends CopyRuntimeDataExchanger<Result> {
+        @Override
+        public Result exchange(RuntimeData data, Result val) {
+            try {
+                val.setCost(Duration.between(data.getInvokeBegin(), data.getInvokeEnd()).toMillis());
+            } catch (Exception e) {
+            }
+            return super.exchange(data, val);
+        }
+    }
+
+    @Bean
+    IRuntimeDataExchanger<Result> runtimeDataExchanger() {
+        return new ResultExchanger();
+    }
+
+    @Bean
+    IErrorHandler resultIErrorHandler(LogUtil logUtil) {
+        return new IErrorHandler() {
+            private ILogger logger = logUtil.getLogger("resultIErrorHandler");
+
+            @Override
+            public Object handleError(Throwable ex, Class<?> returnType, Object result) {
+                logger.error(ex, ex.getMessage());
+                if (Objects.equals(returnType, Result.class)) {
+                    return new Result(ex.getMessage(), -300, -1, null, null, null);
+                } else {
+                    return null;
+                }
+            }
+        };
+    }
     @Bean
     IUserModelPicker userModelPicker() {
         return new IUserModelPicker() {
