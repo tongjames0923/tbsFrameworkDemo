@@ -6,7 +6,7 @@ tbs:
         lock-timeout: 3
         lock-time-unit: seconds
         lock-impl: java.util.concurrent.locks.ReentrantLock
-    local:
+    locale:
       type: cookie
       value: X-LANG
 
