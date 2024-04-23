@@ -1,0 +1,17 @@
+tbs:
+  framework:
+    base:
+      lock:
+        lock-type: tbs.framework.base.lock.impls.JdkLock
+        lock-timeout: 3
+        lock-time-unit: seconds
+        lock-impl: java.util.concurrent.locks.ReentrantLock
+    local:
+      type: cookie
+      value: X-LANG
+
+spring:
+  messages:
+    basename: i18n/i18n
+server:
+  port: 8081
