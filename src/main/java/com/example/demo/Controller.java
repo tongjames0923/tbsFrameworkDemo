@@ -2,6 +2,7 @@ package com.example.demo;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.base.constants.BeanNameConstant;
 import tbs.framework.base.lock.expections.ObtainLockFailException;
 import tbs.framework.base.log.ILogger;
@@ -42,8 +43,19 @@ public class Controller {
         logger = util.getLogger(Controller.class.getName());
     }
 
-    @RequestMapping("/")
+
+    @Resource
+    RuntimeData runtimeData;
+
+
+    @RequestMapping("/api/v1")
     public List<HomeEntity> index() throws InterruptedException, ExecutionException, ObtainLockFailException {
+
+        return homeMapper.selectAll();
+    }
+
+    @RequestMapping("/a1/v1")
+    public List<HomeEntity> index2() throws InterruptedException, ExecutionException, ObtainLockFailException {
 
         return homeMapper.selectAll();
     }

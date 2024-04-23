@@ -3,6 +3,8 @@ package com.example.demo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
+import tbs.framework.auth.interfaces.IUserModelPicker;
+import tbs.framework.auth.model.UserModel;
 import tbs.framework.base.utils.LogUtil;
 import tbs.framework.timer.AbstractTimer;
 import tbs.framework.timer.impls.ScheduledExecutorTimer;
@@ -20,6 +22,19 @@ public class Config {
     AbstractTimer timer(LogUtil logUtil) {
         return new ScheduledExecutorTimer(
             Executors.newScheduledThreadPool(12, new CustomizableThreadFactory("timer-thread")), logUtil);
+    }
+
+    @Bean
+    IUserModelPicker userModelPicker() {
+        return new IUserModelPicker() {
+            @Override
+            public UserModel getUserModel(String token) {
+                UserModel model = new UserModel();
+                model.setUserId(token);
+                model.setUserRole("role:" + token);
+                return model;
+            }
+        };
     }
 
     @Bean
