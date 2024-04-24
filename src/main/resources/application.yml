@@ -14,6 +14,7 @@ tbs:
         "/api/**"
       ]
       token-picker: tbs.framework.auth.interfaces.impls.tokenPickers.ParameterRequestTokenPicker
+
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

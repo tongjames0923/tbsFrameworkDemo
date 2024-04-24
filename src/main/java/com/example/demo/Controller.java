@@ -1,21 +1,19 @@
 package com.example.demo;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import tbs.framework.auth.annotations.ApplyRuntimeData;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.base.constants.BeanNameConstant;
-import tbs.framework.base.lock.expections.ObtainLockFailException;
 import tbs.framework.base.log.ILogger;
 import tbs.framework.base.proxy.IProxy;
 import tbs.framework.base.proxy.impls.LockProxy;
 import tbs.framework.base.utils.LogUtil;
 import tbs.framework.base.utils.MultilingualUtil;
+import tbs.framework.cache.ICacheService;
 import tbs.framework.timer.AbstractTimer;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @RestController
 public class Controller {
@@ -48,26 +46,28 @@ public class Controller {
     @Resource
     RuntimeData runtimeData;
 
-    //    @Resource
-    //    ITest<UserModel> userModelITest;
-    //
-    //    @Resource
-    //    ITest<TestModel> testModelITest;
+    @Resource
+    ICacheService cacheService;
 
-    @RequestMapping("/api/v1")
-    @ApplyRuntimeData
-    public Result index() throws InterruptedException, ExecutionException, ObtainLockFailException {
-        //        userModelITest.run(runtimeData.getUserModel());
-        //        testModelITest.run(new TestModel());
-        Thread.currentThread().join(128);
-        return new Result("11", 1, -1, new TestModel(), runtimeData.getUserModel(), null);
+    @RequestMapping("put")
+    public Result put(@RequestParam String key, @RequestParam String value, @RequestParam long exp) {
+        cacheService.put(key, value, false);
+        if (exp > 0) {
+            cacheService.expire(key, exp);
+        }
+        return new Result("", 1, 0, null, null, null);
     }
 
-    @RequestMapping("/a1/v1")
-    @ApplyRuntimeData
-    public Result index2() throws InterruptedException, ExecutionException, ObtainLockFailException {
-
-        throw new RuntimeException("bad error");
-//        return homeMapper.selectAll();
+    @RequestMapping("get")
+    public Result get(@RequestParam String key) {
+        ;
+        return new Result("", 1, 0, cacheService.get(key, true, 5).orElse("null"), null, null);
     }
+
+    @RequestMapping("remain")
+    public Result remain(@RequestParam String key) {
+        ;
+        return new Result(String.valueOf(cacheService.remain(key)), 0, 0, asyncTest.testModel(), null, null);
+    }
+
 }
