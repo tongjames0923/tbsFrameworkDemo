@@ -7,6 +7,7 @@ import tbs.framework.base.annotations.EnableMultilingual;
 import tbs.framework.base.annotations.EnableTbsAsync;
 import tbs.framework.base.annotations.EnableTbsCache;
 import tbs.framework.base.annotations.EnableTbsFramework;
+import tbs.framework.swagger.annotations.EnableTbsSwagger;
 import tbs.framework.xxl.annotations.EnableTbsXXL;
 
 @EnableTbsFramework
@@ -16,6 +17,7 @@ import tbs.framework.xxl.annotations.EnableTbsXXL;
 //@EnableTbsXXL
 @EnableMultilingual
 @EnableTbsCache
+@EnableTbsSwagger
 public class DemoApplication {
 
     public static void main(String[] args) {

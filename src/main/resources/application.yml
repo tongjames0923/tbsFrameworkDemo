@@ -14,7 +14,8 @@ tbs:
         "/api/**"
       ]
       token-picker: tbs.framework.auth.interfaces.impls.tokenPickers.ParameterRequestTokenPicker
-
+    swagger:
+      base-package: com.example.demo
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -27,6 +28,8 @@ spring:
     basename: i18n/i18n
 server:
   port: 8081
+
+
 
 mybatis:
   configuration:

@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tbs.framework.auth.model.RuntimeData;
@@ -49,7 +50,7 @@ public class Controller {
     @Resource
     ICacheService cacheService;
 
-    @RequestMapping("put")
+    @RequestMapping(value = "put", method = RequestMethod.GET)
     public Result put(@RequestParam String key, @RequestParam String value, @RequestParam long exp) {
         cacheService.put(key, value, false);
         if (exp > 0) {
@@ -58,16 +59,22 @@ public class Controller {
         return new Result("", 1, 0, null, null, null);
     }
 
-    @RequestMapping("get")
+    @RequestMapping(value = "get", method = RequestMethod.GET)
     public Result get(@RequestParam String key) {
         ;
         return new Result("", 1, 0, cacheService.get(key, true, 5).orElse("null"), null, null);
     }
 
-    @RequestMapping("remain")
+    @RequestMapping(value = "remain", method = RequestMethod.GET)
     public Result remain(@RequestParam String key) {
-        ;
+
         return new Result(String.valueOf(cacheService.remain(key)), 0, 0, asyncTest.testModel(), null, null);
+    }
+
+    @RequestMapping(value = "remove", method = RequestMethod.GET)
+    public Result remove(@RequestParam String key) {
+        cacheService.remove(key);
+        return new Result("", 0, 0, asyncTest.testModel(), null, null);
     }
 
 }
