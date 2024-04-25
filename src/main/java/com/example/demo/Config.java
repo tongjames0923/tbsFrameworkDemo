@@ -17,9 +17,9 @@ import tbs.framework.xxl.interfaces.IJsonJobHandler;
 import tbs.framework.xxl.interfaces.IXXLJobsConfig;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.Executors;
 
 @Configuration
@@ -53,13 +53,11 @@ public class Config {
             private ILogger logger = logUtil.getLogger("resultIErrorHandler");
 
             @Override
-            public Object handleError(Throwable ex, Class<?> returnType, Object result) {
+            public Object handleError(Throwable ex) {
                 logger.error(ex, ex.getMessage());
-                if (Objects.equals(returnType, Result.class)) {
+
                     return new Result(ex.getMessage(), -300, -1, null, null, null);
-                } else {
-                    return null;
-                }
+
             }
         };
     }
@@ -68,10 +66,15 @@ public class Config {
         return new IUserModelPicker() {
             @Override
             public UserModel getUserModel(String token) {
-                UserModel model = new UserModel();
-                model.setUserId(token);
-                model.setUserRole("role:" + token);
-                return model;
+                if ("PASS".equals(token)) {
+                    UserModel model = new UserModel();
+                    model.setUserRole(Collections.singleton(token));
+                    model.setUserId("user ID:PASS");
+                    return model;
+                } else {
+                    return null;
+                }
+
             }
         };
     }

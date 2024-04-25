@@ -13,7 +13,9 @@ tbs:
       token-pick-url-patterns: [
         "/api/**"
       ]
-      token-picker: tbs.framework.auth.interfaces.impls.tokenPickers.ParameterRequestTokenPicker
+      token-picker: tbs.framework.auth.interfaces.impls.tokenPickers.HeaderRequestTokenPicker
+      enable-cors: false
+      enable-annotation-permission-validator: true
     swagger:
       base-package: com.example.demo
 spring:
