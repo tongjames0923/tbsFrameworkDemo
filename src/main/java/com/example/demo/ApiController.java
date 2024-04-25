@@ -8,21 +8,21 @@ import tbs.framework.auth.annotations.PermissionValidated;
 @RequestMapping("/api")
 public class ApiController {
 
-    @RequestMapping(value = "a")
+    @RequestMapping("a")
     @PermissionValidated(value = "70", userPermissionProvider = DbPermissionProvider.class)
     public String a() {
 
         return "Hello World a";
     }
 
-    @RequestMapping(value = "b")
-    @PermissionValidated(value = "PASS")
+    @RequestMapping("b")
+    @PermissionValidated("PASS")
     public String b() {
         return "Hello World b";
     }
 
-    @RequestMapping(value = "c")
-    @PermissionValidated(value = "NOT PASS")
+    @RequestMapping("c")
+    @PermissionValidated("NOT PASS")
     public String c() {
         return "Hello World c";
     }

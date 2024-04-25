@@ -52,7 +52,7 @@ public class Config {
     @Bean
     IErrorHandler resultIErrorHandler(LogUtil logUtil) {
         return new IErrorHandler() {
-            private ILogger logger = logUtil.getLogger("resultIErrorHandler");
+            private final ILogger logger = logUtil.getLogger("resultIErrorHandler");
 
             @Override
             public Object handleError(Throwable ex) {
@@ -67,7 +67,7 @@ public class Config {
             @Override
             public UserModel getUserModel(String token) {
                 SysUser user = sysUserMapper.selectByPrimaryKey(token);
-                if (user != null) {
+                if (null != user) {
                     UserModel model = new UserModel();
                     UserRight right = new UserRight();
                     right.setDeleteMark(0);
@@ -95,7 +95,7 @@ public class Config {
     public tbs.framework.xxl.interfaces.IJsonJobHandler<String> tester() {
         return new IJsonJobHandler<String>() {
             @Override
-            public Class<? extends String> classType() {
+            public Class<String> classType() {
                 return String.class;
             }
 

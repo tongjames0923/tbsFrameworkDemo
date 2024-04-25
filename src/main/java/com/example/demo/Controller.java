@@ -53,7 +53,7 @@ public class Controller {
     @RequestMapping(value = "put", method = RequestMethod.GET)
     public Result put(@RequestParam String key, @RequestParam String value, @RequestParam long exp) {
         cacheService.put(key, value, false);
-        if (exp > 0) {
+        if (0 < exp) {
             cacheService.expire(key, exp);
         }
         return new Result("", 1, 0, null, null, null);
@@ -61,7 +61,6 @@ public class Controller {
 
     @RequestMapping(value = "get", method = RequestMethod.GET)
     public Result get(@RequestParam String key) {
-        ;
         return new Result("", 1, 0, cacheService.get(key, true, 5).orElse("null"), null, null);
     }
 

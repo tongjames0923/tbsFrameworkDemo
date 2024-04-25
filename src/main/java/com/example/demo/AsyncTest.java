@@ -48,7 +48,7 @@ public class AsyncTest {
         });
     }
 
-    @Async(value = BeanNameConstant.ASYNC_EXECUTOR)
+    @Async(BeanNameConstant.ASYNC_EXECUTOR)
     @LockIt
     public void test1() throws ObtainLockFailException {
         try {
