@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import tbs.framework.auth.interfaces.IErrorHandler;
+import tbs.framework.auth.interfaces.IPermissionProvider;
 import tbs.framework.auth.interfaces.IRuntimeDataExchanger;
 import tbs.framework.auth.interfaces.IUserModelPicker;
 import tbs.framework.auth.interfaces.impls.CopyRuntimeDataExchanger;
@@ -17,10 +18,11 @@ import tbs.framework.xxl.interfaces.IJsonJobHandler;
 import tbs.framework.xxl.interfaces.IXXLJobsConfig;
 
 import java.time.Duration;
-import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @Configuration
 public class Config {
@@ -55,21 +57,26 @@ public class Config {
             @Override
             public Object handleError(Throwable ex) {
                 logger.error(ex, ex.getMessage());
-
                     return new Result(ex.getMessage(), -300, -1, null, null, null);
-
             }
         };
     }
     @Bean
-    IUserModelPicker userModelPicker() {
+    IUserModelPicker userModelPicker(UserRightMapper userRightMapper, SysUserMapper sysUserMapper) {
         return new IUserModelPicker() {
             @Override
             public UserModel getUserModel(String token) {
-                if ("PASS".equals(token)) {
+                SysUser user = sysUserMapper.selectByPrimaryKey(token);
+                if (user != null) {
                     UserModel model = new UserModel();
-                    model.setUserRole(Collections.singleton(token));
-                    model.setUserId("user ID:PASS");
+                    UserRight right = new UserRight();
+                    right.setDeleteMark(0);
+                    right.setUserId(user.getId());
+                    List<UserRight> ls = userRightMapper.select(right);
+                    model.setUserRole(ls.stream().map((ur) -> {
+                        return String.format("%s", ur.getRightsId());
+                    }).collect(Collectors.toSet()));
+                    model.setUserId(user.getId().toString());
                     return model;
                 } else {
                     return null;
@@ -77,6 +84,11 @@ public class Config {
 
             }
         };
+    }
+
+    @Bean
+    IPermissionProvider permissionProvider() {
+        return new DbPermissionProvider();
     }
 
     @Bean
