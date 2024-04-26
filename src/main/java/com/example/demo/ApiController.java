@@ -4,6 +4,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tbs.framework.auth.annotations.PermissionValidated;
 
+/**
+ * @author Abstergo
+ */
 @RestController
 @RequestMapping("/api")
 public class ApiController {

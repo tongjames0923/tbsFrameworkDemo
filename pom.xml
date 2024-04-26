@@ -17,6 +17,7 @@
         <dependency>
             <groupId>tbs.framework</groupId>
             <artifactId>all</artifactId>
+            <type>pom</type>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
