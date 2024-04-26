@@ -7,11 +7,11 @@ tbs:
         lock-time-unit: seconds
         lock-impl: java.util.concurrent.locks.ReentrantLock
     locale:
-      type: cookie
+      type: header
       value: X-LANG
     auth:
       token-picker: tbs.framework.auth.interfaces.impls.tokenPickers.HeaderRequestTokenPicker
-      enable-cors: false
+      enable-cors: true
       enable-annotation-permission-validator: true
       auth-path-pattern:
         [

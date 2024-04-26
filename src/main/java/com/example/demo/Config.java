@@ -17,10 +17,9 @@ import tbs.framework.timer.impls.ScheduledExecutorTimer;
 import tbs.framework.xxl.interfaces.IJsonJobHandler;
 import tbs.framework.xxl.interfaces.IXXLJobsConfig;
 
+import javax.annotation.Resource;
 import java.time.Duration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
@@ -57,10 +56,14 @@ public class Config {
             @Override
             public Object handleError(Throwable ex) {
                 logger.error(ex, ex.getMessage());
-                    return new Result(ex.getMessage(), -300, -1, null, null, null);
+                return new Result(ex.getMessage(), -300, -1, ex, null, RuntimeData.getInstance().getInvokeUrl());
             }
         };
     }
+
+    @Resource
+    ApiRightMapper apiRightMapper;
+
     @Bean
     IUserModelPicker userModelPicker(UserRightMapper userRightMapper, SysUserMapper sysUserMapper) {
         return new IUserModelPicker() {
@@ -72,7 +75,15 @@ public class Config {
                     UserRight right = new UserRight();
                     right.setDeleteMark(0);
                     right.setUserId(user.getId());
-                    List<UserRight> ls = userRightMapper.select(right);
+                    ApiRight apiRight = new ApiRight();
+                    apiRight.setEnable(1);
+                    apiRight.setUrl(RuntimeData.getInstance().getInvokeUrl());
+                    Set<Long> apiIds = apiRightMapper.select(apiRight).stream().map((a) -> {
+                        return Optional.ofNullable(a).map(ApiRight::getId).orElse(-1L);
+                    }).collect(Collectors.toSet());
+                    List<UserRight> ls = userRightMapper.select(right).stream().filter((t) -> {
+                        return apiIds.contains(t.getRightsId());
+                    }).collect(Collectors.toList());
                     model.setUserRole(ls.stream().map((ur) -> {
                         return String.format("%s", ur.getRightsId());
                     }).collect(Collectors.toSet()));

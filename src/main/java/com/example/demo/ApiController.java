@@ -11,8 +11,10 @@ import tbs.framework.auth.annotations.PermissionValidated;
 @RequestMapping("/api")
 public class ApiController {
 
+    @DbPermission
+    @PermissionValidated(value = "70")
+    @PermissionValidated(value = "66")
     @RequestMapping("a")
-    @PermissionValidated(value = "70", userPermissionProvider = DbPermissionProvider.class)
     public String a() {
 
         return "Hello World a";
