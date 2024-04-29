@@ -76,10 +76,10 @@ public class Controller {
     }
 
     @Resource
-    SysUserMapper sysUserMapper;
+    LoginInfoMapper loginInfoMapper;
 
     @RequestMapping(value = "search", method = RequestMethod.POST)
-    public List<SysUser> sysUserList(@RequestBody SysUserQO qo, @RequestParam int p, @RequestParam int n) {
-        return sysUserMapper.queryByQO(qo, new Page(p, n));
+    public List<LoginInfo> sysUserList(@RequestBody LoginInfoQO qo, @RequestParam int p, @RequestParam int n) {
+        return loginInfoMapper.queryByQO(qo, new Page(p, n));
     }
 }
