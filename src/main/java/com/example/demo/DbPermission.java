@@ -10,6 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@Component
 @PermissionValidated(userPermissionProvider = DbPermissionProvider.class)
 public @interface DbPermission {
     @AliasFor(annotation = PermissionValidated.class) String value() default "";

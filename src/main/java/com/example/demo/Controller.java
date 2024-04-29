@@ -1,9 +1,6 @@
 package com.example.demo;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.base.constants.BeanNameConstant;
 import tbs.framework.base.log.ILogger;
@@ -12,9 +9,11 @@ import tbs.framework.base.proxy.impls.LockProxy;
 import tbs.framework.base.utils.LogUtil;
 import tbs.framework.base.utils.MultilingualUtil;
 import tbs.framework.cache.ICacheService;
+import tbs.framework.sql.model.Page;
 import tbs.framework.timer.AbstractTimer;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 public class Controller {
@@ -76,4 +75,11 @@ public class Controller {
         return new Result("", 0, 0, asyncTest.testModel(), null, null);
     }
 
+    @Resource
+    SysUserMapper sysUserMapper;
+
+    @RequestMapping(value = "search", method = RequestMethod.POST)
+    public List<SysUser> sysUserList(@RequestBody SysUserQO qo, @RequestParam int p, @RequestParam int n) {
+        return sysUserMapper.queryByQO(qo, new Page(p, n));
+    }
 }
