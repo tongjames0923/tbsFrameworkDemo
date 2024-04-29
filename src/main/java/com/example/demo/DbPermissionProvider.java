@@ -15,14 +15,14 @@ public class DbPermissionProvider implements IPermissionProvider {
     ApiRightMapper apiRightMapper;
 
     @Override
-    public List<PermissionModel> retrievePermissions(UserModel userModel, String url, Method method) {
-        ApiRight apiRight = new ApiRight();
+    public List<PermissionModel> retrievePermissions(final UserModel userModel, final String url, final Method method) {
+        final ApiRight apiRight = new ApiRight();
         apiRight.setEnable(1);
         apiRight.setUrl(url);
-        List<ApiRight> apiRights = apiRightMapper.select(apiRight);
-        List<PermissionModel> permissionModels = new LinkedList<>();
-        for (ApiRight apiRight1 : apiRights) {
-            PermissionModel permissionModel = new PermissionModel();
+        final List<ApiRight> apiRights = this.apiRightMapper.select(apiRight);
+        final List<PermissionModel> permissionModels = new LinkedList<>();
+        for (final ApiRight apiRight1 : apiRights) {
+            final PermissionModel permissionModel = new PermissionModel();
             permissionModel.setUrl(apiRight1.getUrl());
             permissionModel.setRole(apiRight1.getId().toString());
             permissionModels.add(permissionModel);

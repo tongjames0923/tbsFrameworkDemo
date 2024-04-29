@@ -22,27 +22,27 @@ public class AsyncTest {
     @Resource
     LockProxy lockProxy;
 
-    public AsyncTest(LogUtil logUtil) {
-        this.logger = logUtil.getLogger(AsyncTest.class.getName());
+    public AsyncTest(final LogUtil logUtil) {
+        logger = logUtil.getLogger(AsyncTest.class.getName());
     }
 
     @Async(BeanNameConstant.ASYNC_EXECUTOR)
     public Future<String> test() {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                return lockProxy.proxy((a) -> {
-                    logger.info("start wait");
+                return this.lockProxy.proxy((a) -> {
+                    this.logger.info("start wait");
                     try {
                         Thread.currentThread().join(12000);
-                    } catch (InterruptedException e) {
+                    } catch (final InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                    logger.info("end onece");
+                    this.logger.info("end onece");
                     return "Hello World!";
                 }, null).orElse("error got");
-            } catch (ObtainLockFailException e) {
+            } catch (final ObtainLockFailException e) {
                 throw new RuntimeException(e);
-            } catch (Throwable throwable) {
+            } catch (final Throwable throwable) {
                 throw new RuntimeException(throwable);
             }
         });
@@ -53,10 +53,10 @@ public class AsyncTest {
     public void test1() throws ObtainLockFailException {
         try {
             Thread.currentThread().join(4000);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             throw new RuntimeException(e);
         }
-        logger.info("Hello World!");
+        this.logger.info("Hello World!");
     }
 
     @Translated

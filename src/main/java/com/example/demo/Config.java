@@ -27,17 +27,17 @@ import java.util.stream.Collectors;
 public class Config {
 
     @Bean
-    AbstractTimer timer(LogUtil logUtil) {
+    AbstractTimer timer(final LogUtil logUtil) {
         return new ScheduledExecutorTimer(
             Executors.newScheduledThreadPool(12, new CustomizableThreadFactory("timer-thread")), logUtil);
     }
 
     private static class ResultExchanger extends CopyRuntimeDataExchanger<Result> {
         @Override
-        public Result exchange(RuntimeData data, Result val) {
+        public Result exchange(final RuntimeData data, final Result val) {
             try {
                 val.setCost(Duration.between(data.getInvokeBegin(), data.getInvokeEnd()).toMillis());
-            } catch (Exception e) {
+            } catch (final Exception e) {
             }
             return super.exchange(data, val);
         }
@@ -49,13 +49,13 @@ public class Config {
     }
 
     @Bean
-    IErrorHandler resultIErrorHandler(LogUtil logUtil) {
+    IErrorHandler resultIErrorHandler(final LogUtil logUtil) {
         return new IErrorHandler() {
             private final ILogger logger = logUtil.getLogger("resultIErrorHandler");
 
             @Override
-            public Object handleError(Throwable ex) {
-                logger.error(ex, ex.getMessage());
+            public Object handleError(final Throwable ex) {
+                this.logger.error(ex, ex.getMessage());
                 return new Result(ex.getMessage(), -300, -1, ex, null, RuntimeData.getInstance().getInvokeUrl());
             }
         };
@@ -65,23 +65,23 @@ public class Config {
     ApiRightMapper apiRightMapper;
 
     @Bean
-    IUserModelPicker userModelPicker(UserRightMapper userRightMapper, SysUserMapper sysUserMapper) {
+    IUserModelPicker userModelPicker(final UserRightMapper userRightMapper, final SysUserMapper sysUserMapper) {
         return new IUserModelPicker() {
             @Override
-            public UserModel getUserModel(String token) {
-                SysUser user = sysUserMapper.selectByPrimaryKey(token);
+            public UserModel getUserModel(final String token) {
+                final SysUser user = sysUserMapper.selectByPrimaryKey(token);
                 if (null != user) {
-                    UserModel model = new UserModel();
-                    UserRight right = new UserRight();
+                    final UserModel model = new UserModel();
+                    final UserRight right = new UserRight();
                     right.setDeleteMark(0);
                     right.setUserId(user.getId());
-                    ApiRight apiRight = new ApiRight();
+                    final ApiRight apiRight = new ApiRight();
                     apiRight.setEnable(1);
                     apiRight.setUrl(RuntimeData.getInstance().getInvokeUrl());
-                    Set<Long> apiIds = apiRightMapper.select(apiRight).stream().map((a) -> {
+                    final Set<Long> apiIds = Config.this.apiRightMapper.select(apiRight).stream().map((a) -> {
                         return Optional.ofNullable(a).map(ApiRight::getId).orElse(-1L);
                     }).collect(Collectors.toSet());
-                    List<UserRight> ls = userRightMapper.select(right).stream().filter((t) -> {
+                    final List<UserRight> ls = userRightMapper.select(right).stream().filter((t) -> {
                         return apiIds.contains(t.getRightsId());
                     }).collect(Collectors.toList());
                     model.setUserRole(ls.stream().map((ur) -> {
@@ -111,7 +111,7 @@ public class Config {
             }
 
             @Override
-            public String paramConvert(Map mp) {
+            public String paramConvert(final Map mp) {
                 if (mp.isEmpty()) {
                     return "";
                 }
@@ -119,7 +119,7 @@ public class Config {
             }
 
             @Override
-            public String handle(String params) throws Exception {
+            public String handle(final String params) throws Exception {
                 return String.format("Hello %s!", params);
             }
         };
