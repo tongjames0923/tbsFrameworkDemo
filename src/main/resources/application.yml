@@ -23,8 +23,7 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     password: '!Ty1997923'
-    url: jdbc:p6spy:mysql://192.168.50.197:3306/easy_home_money?serverTimezone=Asia/Shanghai&characterEncoding=UTF-8&useUnicode=true
-    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    url: jdbc:mysql://192.168.50.197:3306/easy_home_money?serverTimezone=Asia/Shanghai&characterEncoding=UTF-8&useUnicode=true
     username: root
   messages:
     basename: i18n/i18n
