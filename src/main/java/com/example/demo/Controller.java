@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import com.alibaba.fastjson2.JSON;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.web.bind.annotation.*;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.base.constants.BeanNameConstant;
@@ -10,9 +12,11 @@ import tbs.framework.base.utils.LogUtil;
 import tbs.framework.base.utils.MultilingualUtil;
 import tbs.framework.cache.ICacheService;
 import tbs.framework.sql.model.Page;
+import tbs.framework.sql.utils.TransactionUtil;
 import tbs.framework.timer.AbstractTimer;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -77,6 +81,28 @@ public class Controller {
 
     @Resource
     LoginInfoMapper loginInfoMapper;
+
+    @RequestMapping("testTransication")
+    public String testTransication() {
+        LoginInfo[] loginInfos = new LoginInfo[] {
+            new LoginInfo(null, 1L, Integer.valueOf(1).byteValue(), new Date(), Integer.valueOf(1).byteValue(), 1L,
+                null),
+            new LoginInfo(null, 2L, Integer.valueOf(1).byteValue(), new Date(), Integer.valueOf(1).byteValue(), 1L,
+                null),
+            new LoginInfo(null, 3L, Integer.valueOf(1).byteValue(), new Date(), Integer.valueOf(1).byteValue(), 1L,
+                null)};
+        TransactionUtil.getInstance().executeTransaction(Propagation.REQUIRED.value(), () -> {
+
+            for (int i = 0; i < loginInfos.length; i++) {
+                //                if (i == loginInfos.length - 1) {
+                //                    throw new RuntimeException("test error");
+                //                }
+                loginInfoMapper.insert(loginInfos[i]);
+            }
+
+        });
+        return JSON.toJSONString(loginInfos);
+    }
 
     @RequestMapping(value = "search", method = RequestMethod.POST)
     public List<LoginInfo> sysUserList(@RequestBody final LoginInfoQO qo, @RequestParam final int p, @RequestParam final int n) {

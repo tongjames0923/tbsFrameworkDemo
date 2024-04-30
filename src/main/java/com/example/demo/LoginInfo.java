@@ -1,7 +1,9 @@
 package com.example.demo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -13,6 +15,8 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "login_info")
+@AllArgsConstructor
+@NoArgsConstructor
 public class LoginInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
