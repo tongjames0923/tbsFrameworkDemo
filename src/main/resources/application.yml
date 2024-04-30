@@ -19,6 +19,8 @@ tbs:
         ]
     swagger:
       base-package: com.example.demo
+    sql:
+      enable-log-interceptor: true
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

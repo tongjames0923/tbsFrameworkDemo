@@ -12,6 +12,8 @@ import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
 import tbs.framework.base.log.ILogger;
 import tbs.framework.base.utils.LogUtil;
+import tbs.framework.sql.interfaces.ISqlLogger;
+import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
 import tbs.framework.timer.AbstractTimer;
 import tbs.framework.timer.impls.ScheduledExecutorTimer;
 import tbs.framework.xxl.interfaces.IJsonJobHandler;
@@ -30,6 +32,11 @@ public class Config {
     AbstractTimer timer(final LogUtil logUtil) {
         return new ScheduledExecutorTimer(
             Executors.newScheduledThreadPool(12, new CustomizableThreadFactory("timer-thread")), logUtil);
+    }
+
+    @Bean
+    ISqlLogger sqlLogger(LogUtil logUtil) {
+        return new SimpleJsonLogger(logUtil);
     }
 
     private static class ResultExchanger extends CopyRuntimeDataExchanger<Result> {
