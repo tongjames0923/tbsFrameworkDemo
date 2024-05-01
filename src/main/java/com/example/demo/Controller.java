@@ -121,8 +121,8 @@ public class Controller {
 
     }
 
-    RangeChain range(int from, int to) {
-        AbstractChain.Builder<Void, Integer, RangeChain> builder = AbstractChain.newChain();
+    AbstractCollectiveChain range(int from, int to) {
+        AbstractChain.Builder<Void, Integer, AbstractCollectiveChain<Void, Integer>> builder = AbstractChain.newChain();
         for (int i = from; i < to; i++) {
             builder.add(new RangeChain(i, to - 1));
         }
