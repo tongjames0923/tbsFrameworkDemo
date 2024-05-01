@@ -5,9 +5,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.web.bind.annotation.*;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.base.constants.BeanNameConstant;
+import tbs.framework.base.intefaces.impls.chain.AbstractChain;
+import tbs.framework.base.intefaces.impls.chain.AbstractCollectiveChain;
 import tbs.framework.base.log.ILogger;
 import tbs.framework.base.proxy.IProxy;
 import tbs.framework.base.proxy.impls.LockProxy;
+import tbs.framework.base.utils.ChainUtil;
 import tbs.framework.base.utils.LogUtil;
 import tbs.framework.base.utils.MultilingualUtil;
 import tbs.framework.cache.ICacheService;
@@ -97,6 +100,38 @@ public class Controller {
 
         });
         return JSON.toJSONString(loginInfos);
+    }
+
+    static class RangeChain extends AbstractCollectiveChain<Void, Integer> {
+
+        int i = 0, mx;
+
+        public RangeChain(int i, int max) {
+            this.i = i;
+            this.mx = max;
+        }
+
+        @Override
+        public void doChain(Void param) {
+            set(i);
+            if (mx == i) {
+                setAvailable(true);
+            }
+        }
+
+    }
+
+    RangeChain range(int from, int to) {
+        AbstractChain.Builder<Void, Integer, RangeChain> builder = AbstractChain.newChain();
+        for (int i = from; i < to; i++) {
+            builder.add(new RangeChain(i, to - 1));
+        }
+        return builder.build();
+    }
+
+    @RequestMapping(value = "testChain", method = RequestMethod.GET)
+    public List test() {
+        return ((AbstractCollectiveChain)ChainUtil.processForChain(range(0, 100), null)).collectFromChain();
     }
 
     @RequestMapping(value = "search", method = RequestMethod.POST)
