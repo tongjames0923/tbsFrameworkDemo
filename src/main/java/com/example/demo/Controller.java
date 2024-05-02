@@ -88,23 +88,21 @@ public class Controller {
 
     @RequestMapping("testTransication")
     public String testTransication() {
-        LoginInfo[] loginInfos = new LoginInfo[] {
+        LoginInfo[] loginInfos = {
             new LoginInfo(null, 1L, Integer.valueOf(1).byteValue(), new Date(), Integer.valueOf(1).byteValue(), 1L,
                 null),
             new LoginInfo(null, 2L, Integer.valueOf(1).byteValue(), new Date(), Integer.valueOf(1).byteValue(), 1L,
                 null),
             new LoginInfo(null, 3L, Integer.valueOf(1).byteValue(), new Date(), Integer.valueOf(1).byteValue(), 1L,
                 null)};
-        TransactionUtil.getInstance().executeTransaction(Propagation.REQUIRED.value(), () -> {
-            loginInfoMapper.insertList(Arrays.asList(loginInfos));
-
-        });
+        TransactionUtil.getInstance().executeTransaction(Propagation.REQUIRED.value(),
+            () -> loginInfoMapper.insertList(Arrays.asList(loginInfos)));
         return JSON.toJSONString(loginInfos);
     }
 
     static class RangeChain extends AbstractCollectiveChain<Void, Integer> {
 
-        int i = 0, mx;
+        int i, mx;
 
         public RangeChain(int i, int max) {
             this.i = i;
@@ -113,6 +111,7 @@ public class Controller {
 
         @Override
         public void doChain(Void param) {
+
             set(i);
             if (mx == i) {
                 setAvailable(true);
@@ -121,7 +120,7 @@ public class Controller {
 
     }
 
-    AbstractCollectiveChain range(int from, int to) {
+    AbstractCollectiveChain<Void, Integer> range(int from, int to) {
         AbstractChain.Builder<Void, Integer, AbstractCollectiveChain<Void, Integer>> builder = AbstractChain.newChain();
         for (int i = from; i < to; i++) {
             builder.add(new RangeChain(i, to - 1));
@@ -130,8 +129,9 @@ public class Controller {
     }
 
     @RequestMapping(value = "testChain", method = RequestMethod.GET)
-    public List test() {
-        return ((AbstractCollectiveChain)ChainUtil.processForChain(range(0, 100), null)).collectFromChain();
+    public List<Integer> test() {
+        return ((AbstractCollectiveChain<Void, Integer>)ChainUtil.processForChain(range(0, 100),
+            null)).collectFromChain();
     }
 
     @RequestMapping(value = "search", method = RequestMethod.POST)
