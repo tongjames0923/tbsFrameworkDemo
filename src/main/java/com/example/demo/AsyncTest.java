@@ -33,13 +33,13 @@ public class AsyncTest {
                 return this.lockProxy.proxy((a) -> {
                     this.logger.info("start wait");
                     try {
-                        Thread.currentThread().join(12000);
+                        Thread.currentThread().join(1000);
                     } catch (final InterruptedException e) {
                         throw new RuntimeException(e);
                     }
                     this.logger.info("end onece");
                     return "Hello World!";
-                }, null).orElse("error got");
+                }, null, null).orElse("error got");
             } catch (final ObtainLockFailException e) {
                 throw new RuntimeException(e);
             } catch (final Throwable throwable) {
@@ -49,10 +49,10 @@ public class AsyncTest {
     }
 
     @Async(BeanNameConstant.ASYNC_EXECUTOR)
-    @LockIt
+    @LockIt(lockId = "h")
     public void test1() throws ObtainLockFailException {
         try {
-            Thread.currentThread().join(4000);
+            Thread.currentThread().join(1000);
         } catch (final InterruptedException e) {
             throw new RuntimeException(e);
         }

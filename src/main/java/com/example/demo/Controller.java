@@ -134,6 +134,13 @@ public class Controller {
             null)).collectFromChain();
     }
 
+    @RequestMapping(value = "testLock", method = RequestMethod.GET)
+    public String lockTest() throws Exception {
+        asyncTest.test1();
+
+        return asyncTest.test().get();
+    }
+
     @RequestMapping(value = "search", method = RequestMethod.POST)
     public List<LoginInfo> sysUserList(@RequestBody final LoginInfoQO qo, @RequestParam final int p, @RequestParam final int n) {
         return this.loginInfoMapper.queryByQO(qo, new Page(p, n));
