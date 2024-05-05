@@ -2,10 +2,9 @@ tbs:
   framework:
     base:
       lock:
-        lock-type: tbs.framework.base.lock.impls.JdkLock
+        lock-type: tbs.framework.redis.impls.RedissonLockImpl
         lock-timeout: 3
         lock-time-unit: seconds
-        lock-impl: java.util.concurrent.locks.ReentrantLock
     locale:
       type: header
       value: X-LANG
@@ -39,14 +38,12 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm
     time-zone: GMT+8
-  main:
-    allow-bean-definition-overriding: true
 server:
   port: 8081
 
 mybatis:
   configuration:
-     map-underscore-to-camel-case: true
+    map-underscore-to-camel-case: true
 logging:
   level:
     tbs.framework: trace
