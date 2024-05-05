@@ -7,10 +7,11 @@ import tbs.framework.base.annotations.EnableMultilingual;
 import tbs.framework.base.annotations.EnableTbsAsync;
 import tbs.framework.base.annotations.EnableTbsCache;
 import tbs.framework.base.annotations.EnableTbsFramework;
+import tbs.framework.redis.annotations.EnableTbsRedis;
 import tbs.framework.sql.annotations.EnableTbsSqlUtils;
 import tbs.framework.swagger.annotations.EnableTbsSwagger;
 
-@EnableTbsFramework
+@EnableTbsRedis
 @EnableTbsAuth
 @SpringBootApplication
 @EnableTbsAsync
@@ -19,6 +20,7 @@ import tbs.framework.swagger.annotations.EnableTbsSwagger;
 @EnableTbsCache
 @EnableTbsSwagger
 @EnableTbsSqlUtils
+
 public class DemoApplication {
 
     public static void main(final String[] args) {

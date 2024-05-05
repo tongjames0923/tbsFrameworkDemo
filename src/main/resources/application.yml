@@ -21,17 +21,26 @@ tbs:
       base-package: com.example.demo
     sql:
       enable-log-interceptor: true
+    redis:
+      redisson-type: single
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     password: '!Ty1997923'
     url: jdbc:mysql://192.168.50.197:3306/easy_home_money?serverTimezone=Asia/Shanghai&characterEncoding=UTF-8&useUnicode=true
     username: root
+  redis:
+    password: '123456'
+    host: 127.0.0.1
+    port: 6379
+    timeout: 300000
   messages:
     basename: i18n/i18n
   jackson:
     date-format: yyyy-MM-dd HH:mm
     time-zone: GMT+8
+  main:
+    allow-bean-definition-overriding: true
 server:
   port: 8081
 

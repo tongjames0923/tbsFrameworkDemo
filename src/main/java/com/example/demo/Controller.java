@@ -3,6 +3,7 @@ package com.example.demo;
 import com.alibaba.fastjson2.JSON;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.web.bind.annotation.*;
+import tbs.framework.auth.annotations.ApplyRuntimeData;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.base.constants.BeanNameConstant;
 import tbs.framework.base.intefaces.impls.chain.AbstractChain;
@@ -58,6 +59,7 @@ public class Controller {
     ICacheService cacheService;
 
     @RequestMapping(value = "put", method = RequestMethod.GET)
+    @ApplyRuntimeData
     public Result put(@RequestParam final String key, @RequestParam final String value, @RequestParam final long exp) {
         this.cacheService.put(key, value, false);
         if (0 < exp) {
@@ -67,17 +69,20 @@ public class Controller {
     }
 
     @RequestMapping(value = "get", method = RequestMethod.GET)
+    @ApplyRuntimeData
     public Result get(@RequestParam final String key) {
         return new Result("", 1, 0, this.cacheService.get(key, true, 5).orElse("null"), null, null);
     }
 
     @RequestMapping(value = "remain", method = RequestMethod.GET)
+    @ApplyRuntimeData
     public Result remain(@RequestParam final String key) {
 
         return new Result(String.valueOf(this.cacheService.remain(key)), 0, 0, this.asyncTest.testModel(), null, null);
     }
 
     @RequestMapping(value = "remove", method = RequestMethod.GET)
+    @ApplyRuntimeData
     public Result remove(@RequestParam final String key) {
         this.cacheService.remove(key);
         return new Result("", 0, 0, this.asyncTest.testModel(), null, null);
