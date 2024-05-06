@@ -8,6 +8,10 @@ import tbs.framework.base.lock.expections.ObtainLockFailException;
 import tbs.framework.base.log.ILogger;
 import tbs.framework.base.proxy.impls.LockProxy;
 import tbs.framework.base.utils.LogUtil;
+import tbs.framework.cache.annotations.CacheLoading;
+import tbs.framework.cache.annotations.CacheUnloading;
+import tbs.framework.cache.impls.broker.NullableCacheBroker;
+import tbs.framework.cache.impls.eliminate.ExpireCacheStrategy;
 import tbs.framework.multilingual.annotations.Translated;
 
 import javax.annotation.Resource;
@@ -24,6 +28,13 @@ public class AsyncTest {
 
     public AsyncTest(final LogUtil logUtil) {
         logger = logUtil.getLogger(AsyncTest.class.getName());
+    }
+
+    @CacheUnloading(key = "#args[0]", eliminationStrategy = ExpireCacheStrategy.class, intArgs = {60})
+    @CacheLoading(key = "#args[0]",cacheBroker = NullableCacheBroker.class)
+    public String testCache(int id) throws InterruptedException {
+        Thread.currentThread().join(1000);
+        return null;
     }
 
     @Async(BeanNameConstant.ASYNC_EXECUTOR)

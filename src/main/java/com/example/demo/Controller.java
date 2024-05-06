@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.web.bind.annotation.*;
@@ -139,6 +140,12 @@ public class Controller {
             null)).collectFromChain();
     }
 
+    @RequestMapping(value = "testCache", method = RequestMethod.GET)
+    public String cacheTest(int id) throws Exception {
+        String r= asyncTest.testCache(id);
+
+        return StrUtil.isEmpty(r)?"null":r;
+    }
     @RequestMapping(value = "testLock", method = RequestMethod.GET)
     public String lockTest() throws Exception {
         asyncTest.test1();

@@ -23,6 +23,7 @@ import tbs.framework.swagger.annotations.EnableTbsSwagger;
 
 public class DemoApplication {
 
+
     public static void main(final String[] args) {
         SpringApplication.run(DemoApplication.class, args);
     }
