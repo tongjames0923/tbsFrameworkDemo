@@ -15,15 +15,15 @@ import tbs.framework.base.proxy.impls.LockProxy;
 import tbs.framework.base.utils.ChainUtil;
 import tbs.framework.base.utils.LogUtil;
 import tbs.framework.base.utils.MultilingualUtil;
+import tbs.framework.base.utils.UuidUtil;
 import tbs.framework.cache.ICacheService;
 import tbs.framework.sql.model.Page;
 import tbs.framework.sql.utils.TransactionUtil;
 import tbs.framework.timer.AbstractTimer;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 @RestController
 public class Controller {
@@ -146,6 +146,45 @@ public class Controller {
 
         return StrUtil.isEmpty(r)?"null":r;
     }
+
+    @RequestMapping(value = "uuidTest", method = RequestMethod.GET)
+    public List<String> uuidTest(int t, int per) throws Exception {
+        CountDownLatch countDownLatch = new CountDownLatch(t);
+        String[][] arr = new String[t][per];
+        for (int i = 0; i < t; i++) {
+            int finalI = i;
+            Thread t1 = new Thread(() -> {
+                for (int j = 0; j < per; j++) {
+                    arr[finalI][j] = UuidUtil.getUuid();
+                }
+                countDownLatch.countDown();
+            });
+            t1.start();
+        }
+        countDownLatch.await();
+
+        List<String> list = new LinkedList<>();
+        for (int i = 0; i < t; i++) {
+            for (int j = 0; j < per; j++) {
+                list.add(arr[i][j]);
+            }
+        }
+
+        return list;
+    }
+
+    @RequestMapping(value = "unique", method = RequestMethod.POST)
+    public Boolean isUnique(@RequestBody final List<String> value) {
+        Set<String> h = new HashSet<>();
+        for (int i = 0; i < value.size(); i++) {
+            if (h.contains(value.get(i))) {
+                return false;
+            }
+            h.add(value.get(i));
+        }
+        return true;
+    }
+
     @RequestMapping(value = "testLock", method = RequestMethod.GET)
     public String lockTest() throws Exception {
         asyncTest.test1();
