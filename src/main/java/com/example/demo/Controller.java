@@ -12,10 +12,7 @@ import tbs.framework.base.intefaces.impls.chain.AbstractCollectiveChain;
 import tbs.framework.base.log.ILogger;
 import tbs.framework.base.proxy.IProxy;
 import tbs.framework.base.proxy.impls.LockProxy;
-import tbs.framework.base.utils.ChainUtil;
-import tbs.framework.base.utils.LogUtil;
-import tbs.framework.base.utils.MultilingualUtil;
-import tbs.framework.base.utils.UuidUtil;
+import tbs.framework.base.utils.*;
 import tbs.framework.cache.ICacheService;
 import tbs.framework.sql.model.Page;
 import tbs.framework.sql.utils.TransactionUtil;
@@ -147,22 +144,28 @@ public class Controller {
         return StrUtil.isEmpty(r)?"null":r;
     }
 
+    @Resource
+    ThreadUtil threadUtil;
+
     @RequestMapping(value = "uuidTest", method = RequestMethod.GET)
     public List<String> uuidTest(int t, int per) throws Exception {
         CountDownLatch countDownLatch = new CountDownLatch(t);
         String[][] arr = new String[t][per];
+        List<Runnable> callables = new LinkedList<>();
         for (int i = 0; i < t; i++) {
             int finalI = i;
-            Thread t1 = new Thread(() -> {
+            callables.add(() -> {
                 for (int j = 0; j < per; j++) {
                     arr[finalI][j] = UuidUtil.getUuid();
                 }
                 countDownLatch.countDown();
+                if (finalI == 3) {
+                    throw new RuntimeException("just error");
+                }
             });
-            t1.start();
         }
+        threadUtil.runCollectionInBackground(callables);
         countDownLatch.await();
-
         List<String> list = new LinkedList<>();
         for (int i = 0; i < t; i++) {
             for (int j = 0; j < per; j++) {
