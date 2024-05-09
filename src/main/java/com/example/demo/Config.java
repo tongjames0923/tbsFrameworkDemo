@@ -12,6 +12,11 @@ import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
 import tbs.framework.base.log.ILogger;
 import tbs.framework.base.utils.LogUtil;
+import tbs.framework.mq.AbstractMessageCenter;
+import tbs.framework.mq.IMessage;
+import tbs.framework.mq.IMessageConsumer;
+import tbs.framework.mq.impls.AbstractSimpleMsgCenter;
+import tbs.framework.mq.impls.SimpleMessage;
 import tbs.framework.sql.interfaces.ISqlLogger;
 import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
 import tbs.framework.timer.AbstractTimer;
@@ -27,6 +32,73 @@ import java.util.stream.Collectors;
 
 @Configuration
 public class Config {
+
+    @Bean(destroyMethod = "centerStopToWork")
+    AbstractMessageCenter abstractMessageCenter() {
+        return new AbstractSimpleMsgCenter() {
+            @Override
+            protected void onMessageSent(IMessage message) {
+
+            }
+
+            @Override
+            protected boolean onMessageFailed(IMessage message, int retryed, MessageHandleType type,
+                Throwable throwable, IMessageConsumer consumer) {
+                return false;
+            }
+
+        }.setMessageConsumer(new IMessageConsumer() {
+
+            ILogger logger = null;
+
+            @Override
+            public String consumerId() {
+                return "logger";
+            }
+
+            @Override
+            public Set<String> avaliableTopics() {
+                return new HashSet<>(Arrays.asList("core"));
+            }
+
+            @Override
+            public void consume(IMessage message) {
+                if (logger == null) {
+                    logger = LogUtil.getInstance().getLogger(this.getClass().getName() + ":" + this.consumerId());
+                }
+                logger.info("{} content:{}", message.getMessageId(), message.getTag());
+                if (message instanceof SimpleMessage) {
+                    SimpleMessage simpleMessage = (SimpleMessage)message;
+                    simpleMessage.setConsumed();
+                }
+            }
+        }).setMessageConsumer(new IMessageConsumer() {
+            ILogger logger = null;
+
+            @Override
+            public String consumerId() {
+                return "优先级测试";
+            }
+
+            @Override
+            public Set<String> avaliableTopics() {
+                return new HashSet<>(Arrays.asList("优先级"));
+            }
+
+            @Override
+            public void consume(IMessage message) {
+                if (logger == null) {
+                    logger = LogUtil.getInstance().getLogger(this.getClass().getName() + ":" + this.consumerId());
+                }
+                logger.info("{} 优先级:{}", message.getMessageId(), message.getPriority());
+                if (message instanceof SimpleMessage) {
+                    SimpleMessage simpleMessage = (SimpleMessage)message;
+                    simpleMessage.setConsumed();
+                }
+            }
+        });
+    }
+
 
     @Bean
     AbstractTimer timer(final LogUtil logUtil) {

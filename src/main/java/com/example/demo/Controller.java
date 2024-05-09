@@ -2,6 +2,7 @@ package com.example.demo;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
+import lombok.Data;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.web.bind.annotation.*;
 import tbs.framework.auth.annotations.ApplyRuntimeData;
@@ -14,11 +15,14 @@ import tbs.framework.base.proxy.IProxy;
 import tbs.framework.base.proxy.impls.LockProxy;
 import tbs.framework.base.utils.*;
 import tbs.framework.cache.ICacheService;
+import tbs.framework.mq.AbstractMessageCenter;
+import tbs.framework.mq.impls.SimpleMessage;
 import tbs.framework.sql.model.Page;
 import tbs.framework.sql.utils.TransactionUtil;
 import tbs.framework.timer.AbstractTimer;
 
 import javax.annotation.Resource;
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
@@ -48,6 +52,9 @@ public class Controller {
     public Controller(final LogUtil util) {
         this.logger = util.getLogger(Controller.class.getName());
     }
+
+    @Resource
+    AbstractMessageCenter messageCenter;
 
 
     @Resource
@@ -193,6 +200,35 @@ public class Controller {
         asyncTest.test1();
 
         return asyncTest.test().get();
+    }
+
+    @Data
+    public static class MessageParam implements Serializable {
+        String tag;
+    }
+
+    @RequestMapping(value = "testMsgCenter", method = RequestMethod.POST)
+    public String testMsgCenter(@RequestBody MessageParam body) throws Exception {
+        messageCenter.publish(new SimpleMessage(null, body.tag, null, 0));
+
+        return "";
+    }
+
+    Random random = new Random();
+
+    @RequestMapping(value = "testMsgCenterP", method = RequestMethod.POST)
+    public String testMsgCenterP(int t, int n, int range) throws Exception {
+
+        CountDownLatch countDownLatch = new CountDownLatch(t);
+        for (int i = 0; i < t; i++) {
+            threadUtil.runCollectionInBackground(() -> {
+                for (int j = 0; j < n; j++) {
+                    messageCenter.publish(new SimpleMessage("优先级", "", null, random.nextInt(range)));
+                }
+            });
+        }
+
+        return "";
     }
 
     @RequestMapping(value = "search", method = RequestMethod.POST)

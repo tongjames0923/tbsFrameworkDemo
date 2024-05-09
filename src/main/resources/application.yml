@@ -2,9 +2,9 @@ tbs:
   framework:
     base:
       lock:
-        lock-type: tbs.framework.redis.impls.RedissonLockImpl
-        lock-timeout: 3
-        lock-time-unit: seconds
+        proxy-lock-type: tbs.framework.redis.impls.RedissonLockImpl
+        proxy-lock-time-unit: minutes
+        proxy-lock-timeout: 1
       uuid-provider: tbs.framework.base.utils.impls.SnowFlakeUUID
     locale:
       type: header
@@ -43,4 +43,4 @@ mybatis:
     map-underscore-to-camel-case: true
 logging:
   level:
-    tbs.framework: trace
+    tbs.framework: info
