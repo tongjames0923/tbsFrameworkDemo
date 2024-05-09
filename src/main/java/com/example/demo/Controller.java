@@ -3,6 +3,7 @@ package com.example.demo;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import lombok.Data;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.web.bind.annotation.*;
 import tbs.framework.auth.annotations.ApplyRuntimeData;
@@ -54,6 +55,7 @@ public class Controller {
     }
 
     @Resource
+    @Lazy
     AbstractMessageCenter messageCenter;
 
 

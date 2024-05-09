@@ -2,6 +2,8 @@ package com.example.demo;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import tbs.framework.auth.interfaces.IErrorHandler;
 import tbs.framework.auth.interfaces.IPermissionProvider;
@@ -15,8 +17,8 @@ import tbs.framework.base.utils.LogUtil;
 import tbs.framework.mq.AbstractMessageCenter;
 import tbs.framework.mq.IMessage;
 import tbs.framework.mq.IMessageConsumer;
-import tbs.framework.mq.impls.AbstractSimpleMsgCenter;
 import tbs.framework.mq.impls.SimpleMessage;
+import tbs.framework.redis.impls.RedisMessageCenter;
 import tbs.framework.sql.interfaces.ISqlLogger;
 import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
 import tbs.framework.timer.AbstractTimer;
@@ -33,21 +35,12 @@ import java.util.stream.Collectors;
 @Configuration
 public class Config {
 
-    @Bean(destroyMethod = "centerStopToWork")
-    AbstractMessageCenter abstractMessageCenter() {
-        return new AbstractSimpleMsgCenter() {
-            @Override
-            protected void onMessageSent(IMessage message) {
 
-            }
 
-            @Override
-            protected boolean onMessageFailed(IMessage message, int retryed, MessageHandleType type,
-                Throwable throwable, IMessageConsumer consumer) {
-                return false;
-            }
 
-        }.setMessageConsumer(new IMessageConsumer() {
+    @Bean(initMethod = "centerStartToWork",destroyMethod = "centerStopToWork")
+    AbstractMessageCenter abstractMessageCenter(RedisMessageListenerContainer listenerContainer) {
+        return new RedisMessageCenter(listenerContainer).setMessageConsumer(new IMessageConsumer() {
 
             ILogger logger = null;
 
