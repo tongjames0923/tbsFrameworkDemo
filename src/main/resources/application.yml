@@ -28,7 +28,6 @@ spring:
     url: jdbc:mysql://192.168.50.197:3306/easy_home_money?serverTimezone=Asia/Shanghai&characterEncoding=UTF-8&useUnicode=true
     username: root
   redis:
-    host: 192.168.50.197
     password: '123456'
   messages:
     basename: i18n/i18n
@@ -43,4 +42,5 @@ mybatis:
     map-underscore-to-camel-case: true
 logging:
   level:
-    tbs.framework: info
+    tbs.framework: debug
+    com.example.demo: trace

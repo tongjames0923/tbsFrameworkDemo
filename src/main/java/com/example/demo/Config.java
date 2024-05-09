@@ -1,8 +1,9 @@
 package com.example.demo;
 
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import tbs.framework.auth.interfaces.IErrorHandler;
@@ -14,11 +15,11 @@ import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
 import tbs.framework.base.log.ILogger;
 import tbs.framework.base.utils.LogUtil;
-import tbs.framework.mq.AbstractMessageCenter;
-import tbs.framework.mq.IMessage;
-import tbs.framework.mq.IMessageConsumer;
+import tbs.framework.mq.*;
+import tbs.framework.mq.impls.AbstractMsgQueueCenter;
+import tbs.framework.mq.impls.QueueListener;
 import tbs.framework.mq.impls.SimpleMessage;
-import tbs.framework.redis.impls.RedisMessageCenter;
+import tbs.framework.mq.impls.SimpleMessageQueue;
 import tbs.framework.sql.interfaces.ISqlLogger;
 import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
 import tbs.framework.timer.AbstractTimer;
@@ -35,12 +36,9 @@ import java.util.stream.Collectors;
 @Configuration
 public class Config {
 
-
-
-
-    @Bean(initMethod = "centerStartToWork",destroyMethod = "centerStopToWork")
-    AbstractMessageCenter abstractMessageCenter(RedisMessageListenerContainer listenerContainer) {
-        return new RedisMessageCenter(listenerContainer).setMessageConsumer(new IMessageConsumer() {
+    @Bean
+    IMessageConsumer consumer1() {
+        return new IMessageConsumer() {
 
             ILogger logger = null;
 
@@ -65,7 +63,12 @@ public class Config {
                     simpleMessage.setConsumed();
                 }
             }
-        }).setMessageConsumer(new IMessageConsumer() {
+        };
+    }
+
+    @Bean
+    IMessageConsumer consumer2() {
+        return new IMessageConsumer() {
             ILogger logger = null;
 
             @Override
@@ -89,7 +92,54 @@ public class Config {
                     simpleMessage.setConsumed();
                 }
             }
-        });
+        };
+    }
+
+    @Bean
+    IMessageQueue messageQueue() {
+        return new SimpleMessageQueue();
+    }
+
+    @Bean
+    QueueListener queueListener(IMessageQueue queue) {
+        return new QueueListener() {
+            @Override
+            protected IMessageQueue getQueue() {
+                return queue;
+            }
+        };
+    }
+
+    @Bean(destroyMethod = "centerStopToWork")
+    IMessageQueueEvents abstractMessageCenter(RedisMessageListenerContainer listenerContainer, QueueListener listener) {
+        return new AbstractMsgQueueCenter() {
+            private ILogger logger;
+
+            private ILogger getLogger() {
+                if (logger == null) {
+                    logger = LogUtil.getInstance().getLogger(this.getClass().getName());
+                }
+                return logger;
+            }
+
+            @Override
+            protected QueueListener getQueueListener() {
+                return listener;
+            }
+
+            @Override
+            public void onMessageSent(IMessage message) {
+                getLogger().info("onMessageSent: " + message);
+            }
+
+            @Override
+            public boolean onMessageFailed(IMessage message, int retryed, MessageHandleType type, Throwable throwable,
+                IMessageConsumer consumer) {
+                getLogger().error(throwable, "onMessageFailed  retryed:{} type:{}", retryed, type);
+                return false;
+            }
+        };
+
     }
 
 
@@ -238,6 +288,16 @@ public class Config {
             @Override
             public Integer logRetentionsDays() {
                 return 1;
+            }
+        };
+    }
+
+    @Bean
+    ApplicationRunner initMessageCenter(AbstractMessageCenter abstractMessageCenter) {
+        return new ApplicationRunner() {
+            @Override
+            public void run(ApplicationArguments args) throws Exception {
+                abstractMessageCenter.centerStartToWork();
             }
         };
     }
