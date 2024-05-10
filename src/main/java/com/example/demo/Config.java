@@ -16,10 +16,11 @@ import tbs.framework.auth.model.UserModel;
 import tbs.framework.base.log.ILogger;
 import tbs.framework.base.utils.LogUtil;
 import tbs.framework.mq.*;
-import tbs.framework.mq.impls.AbstractMsgQueueCenter;
 import tbs.framework.mq.impls.QueueListener;
 import tbs.framework.mq.impls.SimpleMessage;
 import tbs.framework.mq.impls.SimpleMessageQueue;
+import tbs.framework.redis.impls.AbstractRedisMessageCenter;
+import tbs.framework.redis.impls.RedisMessageReceiver;
 import tbs.framework.sql.interfaces.ISqlLogger;
 import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
 import tbs.framework.timer.AbstractTimer;
@@ -110,9 +111,14 @@ public class Config {
         };
     }
 
+    @Bean
+    RedisMessageReceiver redisMessageReceiver(RedisMessageListenerContainer listenerContainer, IMessageQueue queue) {
+        return new RedisMessageReceiver(listenerContainer, queue);
+    }
+
     @Bean(destroyMethod = "centerStopToWork")
-    IMessageQueueEvents abstractMessageCenter(RedisMessageListenerContainer listenerContainer, QueueListener listener) {
-        return new AbstractMsgQueueCenter() {
+    IMessageQueueEvents abstractMessageCenter(RedisMessageReceiver receiver) {
+        return new AbstractRedisMessageCenter(receiver) {
             private ILogger logger;
 
             private ILogger getLogger() {
@@ -123,14 +129,11 @@ public class Config {
             }
 
             @Override
-            protected QueueListener getQueueListener() {
-                return listener;
-            }
-
-            @Override
             public void onMessageSent(IMessage message) {
                 getLogger().info("onMessageSent: " + message);
             }
+
+
 
             @Override
             public boolean onMessageFailed(IMessage message, int retryed, MessageHandleType type, Throwable throwable,
