@@ -17,8 +17,7 @@ tbs:
         [
           "/api/**"
         ]
-    swagger:
-      base-package: com.example.demo
+
     sql:
       enable-log-interceptor: true
 spring:
@@ -29,13 +28,13 @@ spring:
     username: root
   redis:
     password: '123456'
-  messages:
-    basename: i18n/i18n
+  #  messages:
+  #    basename: i18n/i18n
   jackson:
     date-format: yyyy-MM-dd HH:mm
     time-zone: GMT+8
 server:
-  port: 8082
+  port: 8081
 
 mybatis:
   configuration:
@@ -43,4 +42,4 @@ mybatis:
 logging:
   level:
     tbs.framework: debug
-    com.example.demo: trace
+    sec.secpart: trace

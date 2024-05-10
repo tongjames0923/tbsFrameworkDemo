@@ -6,7 +6,7 @@ import tbs.framework.auth.annotations.EnableTbsAuth;
 import tbs.framework.base.annotations.EnableMultilingual;
 import tbs.framework.base.annotations.EnableTbsAsync;
 import tbs.framework.base.annotations.EnableTbsCache;
-import tbs.framework.base.annotations.EnableTbsFramework;
+import tbs.framework.redis.annotations.EnableRedisMessageCenter;
 import tbs.framework.redis.annotations.EnableTbsRedis;
 import tbs.framework.sql.annotations.EnableTbsSqlUtils;
 import tbs.framework.swagger.annotations.EnableTbsSwagger;
@@ -20,7 +20,7 @@ import tbs.framework.swagger.annotations.EnableTbsSwagger;
 @EnableTbsCache
 @EnableTbsSwagger
 @EnableTbsSqlUtils
-
+@EnableRedisMessageCenter
 public class DemoApplication {
 
 

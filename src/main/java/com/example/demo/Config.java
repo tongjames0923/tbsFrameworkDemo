@@ -72,6 +72,8 @@ public class Config {
         return new IMessageConsumer() {
             ILogger logger = null;
 
+
+
             @Override
             public String consumerId() {
                 return "优先级测试";
@@ -99,16 +101,6 @@ public class Config {
     @Bean
     IMessageQueue messageQueue() {
         return new SimpleMessageQueue();
-    }
-
-    @Bean
-    QueueListener queueListener(IMessageQueue queue) {
-        return new QueueListener() {
-            @Override
-            protected IMessageQueue getQueue() {
-                return queue;
-            }
-        };
     }
 
     @Bean
@@ -291,16 +283,6 @@ public class Config {
             @Override
             public Integer logRetentionsDays() {
                 return 1;
-            }
-        };
-    }
-
-    @Bean
-    ApplicationRunner initMessageCenter(AbstractMessageCenter abstractMessageCenter) {
-        return new ApplicationRunner() {
-            @Override
-            public void run(ApplicationArguments args) throws Exception {
-                abstractMessageCenter.centerStartToWork();
             }
         };
     }
