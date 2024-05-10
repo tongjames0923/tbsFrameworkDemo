@@ -22,7 +22,7 @@ public class DbConsumer implements IMessageConsumer {
 
     @Override
     public Set<String> avaliableTopics() {
-        return new HashSet<>(Arrays.asList("core", "优先级"));
+        return new HashSet<>(Arrays.asList("^db\\.\\w+$"));
     }
 
     @Override

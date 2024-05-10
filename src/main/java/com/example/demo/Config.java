@@ -12,8 +12,8 @@ import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
 import tbs.framework.base.log.ILogger;
 import tbs.framework.base.utils.LogUtil;
-import tbs.framework.mq.*;
-import tbs.framework.mq.impls.event.BaseMessageQueueEvent;
+import tbs.framework.mq.IMessage;
+import tbs.framework.mq.IMessageConsumer;
 import tbs.framework.sql.interfaces.ISqlLogger;
 import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
 import tbs.framework.timer.AbstractTimer;
@@ -43,7 +43,7 @@ public class Config {
 
             @Override
             public Set<String> avaliableTopics() {
-                return new HashSet<>(Arrays.asList("core"));
+                return new HashSet<>(Arrays.asList(".*"));
             }
 
             @Override
@@ -68,7 +68,7 @@ public class Config {
 
             @Override
             public Set<String> avaliableTopics() {
-                return new HashSet<>(Arrays.asList("优先级"));
+                return new HashSet<>(Arrays.asList("优先级.*"));
             }
 
             @Override
@@ -78,39 +78,6 @@ public class Config {
                 }
                 logger.info("{} 优先级:{}", message.getMessageId(), message.getPriority());
                 return true;
-            }
-        };
-    }
-
-
-    @Bean
-    IMessageQueueEvents queueEvents(IMessageConsumerManager consumerManager) {
-        return new BaseMessageQueueEvent() {
-            private ILogger logger;
-
-            private ILogger getLogger() {
-                if (logger == null) {
-                    logger = LogUtil.getInstance().getLogger(this.getClass().getName());
-                }
-                return logger;
-            }
-
-            @Override
-            protected IMessageConsumerManager getConsumerManager() {
-                return consumerManager;
-            }
-
-            @Override
-            public void onMessageSent(IMessage message) {
-                getLogger().info("onMessageSent: " + message);
-            }
-
-            @Override
-            public boolean onMessageFailed(IMessage message, int retryed, MessageHandleType type, Throwable throwable,
-                IMessageConsumer consumer) {
-                getLogger().error(throwable, "onMessageFailed  retryed:{} type:{}", retryed, type);
-
-                return false;
             }
         };
     }

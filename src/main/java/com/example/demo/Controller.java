@@ -207,12 +207,17 @@ public class Controller {
 
     @Data
     public static class MessageParam implements Serializable {
+        private static final long serialVersionUID = 197488360569395600L;
         String tag;
+        String topic;
+        int priorty;
+        Map<String, Object> headers;
+
     }
 
     @RequestMapping(value = "testMsgCenter", method = RequestMethod.POST)
     public String testMsgCenter(@RequestBody MessageParam body) throws Exception {
-        messageCenter.publish(new SimpleMessage(null, body.tag, null, 0));
+        messageCenter.publish(new SimpleMessage(body.topic, body.tag, body.headers, body.priorty));
 
         return "";
     }
