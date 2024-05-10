@@ -2,7 +2,6 @@ package com.example.demo;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import tbs.framework.auth.interfaces.IErrorHandler;
 import tbs.framework.auth.interfaces.IPermissionProvider;
@@ -15,9 +14,6 @@ import tbs.framework.base.log.ILogger;
 import tbs.framework.base.utils.LogUtil;
 import tbs.framework.mq.*;
 import tbs.framework.mq.impls.event.BaseMessageQueueEvent;
-import tbs.framework.mq.impls.queue.SimpleMessageQueue;
-import tbs.framework.redis.impls.RedisMessageCenter;
-import tbs.framework.redis.impls.RedisMessageReceiver;
 import tbs.framework.sql.interfaces.ISqlLogger;
 import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
 import tbs.framework.timer.AbstractTimer;
@@ -86,15 +82,6 @@ public class Config {
         };
     }
 
-    @Bean
-    IMessageQueue messageQueue() {
-        return new SimpleMessageQueue();
-    }
-
-    @Bean
-    RedisMessageReceiver redisMessageReceiver(RedisMessageListenerContainer listenerContainer, IMessageQueue queue) {
-        return new RedisMessageReceiver(listenerContainer, queue);
-    }
 
     @Bean
     IMessageQueueEvents queueEvents(IMessageConsumerManager consumerManager) {
@@ -128,12 +115,6 @@ public class Config {
         };
     }
 
-    @Bean
-    AbstractMessageCenter abstractMessageCenter(RedisMessageReceiver receiver, IMessageQueueEvents queueEvents,
-        IMessageConsumerManager consumerManager) {
-        return new RedisMessageCenter(receiver, consumerManager, queueEvents,
-            Executors.newCachedThreadPool(new CustomizableThreadFactory("msg-center")));
-    }
 
 
     @Bean

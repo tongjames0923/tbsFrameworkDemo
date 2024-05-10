@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
 public class Controller {
@@ -220,17 +221,19 @@ public class Controller {
 
     @RequestMapping(value = "testMsgCenterP", method = RequestMethod.POST)
     public String testMsgCenterP(int t, int n, int range, String tag) throws Exception {
-
+        AtomicLong l = new AtomicLong(0);
         CountDownLatch countDownLatch = new CountDownLatch(t);
         for (int i = 0; i < t; i++) {
             threadUtil.runCollectionInBackground(() -> {
                 for (int j = 0; j < n / t; j++) {
                     messageCenter.publish(new SimpleMessage("优先级", tag, null, random.nextInt(range)));
+                    l.incrementAndGet();
                 }
+                countDownLatch.countDown();
             });
         }
-
-        return "";
+        countDownLatch.await();
+        return l.toString();
     }
 
     @RequestMapping(value = "search", method = RequestMethod.POST)
