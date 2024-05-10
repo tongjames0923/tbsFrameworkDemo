@@ -17,7 +17,7 @@ import tbs.framework.base.proxy.impls.LockProxy;
 import tbs.framework.base.utils.*;
 import tbs.framework.cache.ICacheService;
 import tbs.framework.mq.AbstractMessageCenter;
-import tbs.framework.mq.impls.SimpleMessage;
+import tbs.framework.mq.impls.message.SimpleMessage;
 import tbs.framework.sql.model.Page;
 import tbs.framework.sql.utils.TransactionUtil;
 import tbs.framework.timer.AbstractTimer;

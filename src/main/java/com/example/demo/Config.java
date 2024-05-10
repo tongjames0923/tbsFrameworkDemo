@@ -1,7 +1,5 @@
 package com.example.demo;
 
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
@@ -16,10 +14,9 @@ import tbs.framework.auth.model.UserModel;
 import tbs.framework.base.log.ILogger;
 import tbs.framework.base.utils.LogUtil;
 import tbs.framework.mq.*;
-import tbs.framework.mq.impls.QueueListener;
-import tbs.framework.mq.impls.SimpleMessage;
-import tbs.framework.mq.impls.SimpleMessageQueue;
-import tbs.framework.redis.impls.AbstractRedisMessageCenter;
+import tbs.framework.mq.impls.event.BaseMessageQueueEvent;
+import tbs.framework.mq.impls.queue.SimpleMessageQueue;
+import tbs.framework.redis.impls.RedisMessageCenter;
 import tbs.framework.redis.impls.RedisMessageReceiver;
 import tbs.framework.sql.interfaces.ISqlLogger;
 import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
@@ -54,15 +51,12 @@ public class Config {
             }
 
             @Override
-            public void consume(IMessage message) {
+            public boolean consume(IMessage message) {
                 if (logger == null) {
                     logger = LogUtil.getInstance().getLogger(this.getClass().getName() + ":" + this.consumerId());
                 }
                 logger.info("{} content:{}", message.getMessageId(), message.getTag());
-                if (message instanceof SimpleMessage) {
-                    SimpleMessage simpleMessage = (SimpleMessage)message;
-                    simpleMessage.setConsumed();
-                }
+                return true;
             }
         };
     }
@@ -71,9 +65,6 @@ public class Config {
     IMessageConsumer consumer2() {
         return new IMessageConsumer() {
             ILogger logger = null;
-
-
-
             @Override
             public String consumerId() {
                 return "优先级测试";
@@ -85,15 +76,12 @@ public class Config {
             }
 
             @Override
-            public void consume(IMessage message) {
+            public boolean consume(IMessage message) {
                 if (logger == null) {
                     logger = LogUtil.getInstance().getLogger(this.getClass().getName() + ":" + this.consumerId());
                 }
                 logger.info("{} 优先级:{}", message.getMessageId(), message.getPriority());
-                if (message instanceof SimpleMessage) {
-                    SimpleMessage simpleMessage = (SimpleMessage)message;
-                    simpleMessage.setConsumed();
-                }
+                return true;
             }
         };
     }
@@ -108,9 +96,9 @@ public class Config {
         return new RedisMessageReceiver(listenerContainer, queue);
     }
 
-    @Bean(destroyMethod = "centerStopToWork")
-    IMessageQueueEvents abstractMessageCenter(RedisMessageReceiver receiver) {
-        return new AbstractRedisMessageCenter(receiver) {
+    @Bean
+    IMessageQueueEvents queueEvents(IMessageConsumerManager consumerManager) {
+        return new BaseMessageQueueEvent() {
             private ILogger logger;
 
             private ILogger getLogger() {
@@ -121,20 +109,30 @@ public class Config {
             }
 
             @Override
+            protected IMessageConsumerManager getConsumerManager() {
+                return consumerManager;
+            }
+
+            @Override
             public void onMessageSent(IMessage message) {
                 getLogger().info("onMessageSent: " + message);
             }
-
-
 
             @Override
             public boolean onMessageFailed(IMessage message, int retryed, MessageHandleType type, Throwable throwable,
                 IMessageConsumer consumer) {
                 getLogger().error(throwable, "onMessageFailed  retryed:{} type:{}", retryed, type);
+
                 return false;
             }
         };
+    }
 
+    @Bean
+    AbstractMessageCenter abstractMessageCenter(RedisMessageReceiver receiver, IMessageQueueEvents queueEvents,
+        IMessageConsumerManager consumerManager) {
+        return new RedisMessageCenter(receiver, consumerManager, queueEvents,
+            Executors.newCachedThreadPool(new CustomizableThreadFactory("msg-center")));
     }
 
 

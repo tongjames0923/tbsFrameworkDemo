@@ -3,18 +3,18 @@ package sec.secpart;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import tbs.framework.base.log.ILogger;
 import tbs.framework.base.utils.LogUtil;
-import tbs.framework.mq.IMessage;
-import tbs.framework.mq.IMessageConsumer;
-import tbs.framework.mq.IMessageQueue;
-import tbs.framework.mq.impls.SimpleMessageQueue;
-import tbs.framework.redis.impls.AbstractRedisMessageCenter;
+import tbs.framework.mq.*;
+import tbs.framework.mq.impls.queue.SimpleMessageQueue;
+import tbs.framework.redis.impls.RedisMessageCenter;
 import tbs.framework.redis.impls.RedisMessageReceiver;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executors;
 
 @Configuration
 public class Config {
@@ -52,27 +52,17 @@ public class Config {
             }
 
             @Override
-            public void consume(IMessage message) {
+            public boolean consume(IMessage message) {
                 getLog().info("consume msg: {}", message.toString());
-                message.setConsumed();
+                return true;
             }
         };
     }
 
     @Bean
-    AbstractRedisMessageCenter messageCenter(RedisMessageReceiver receiver) {
-        return new AbstractRedisMessageCenter(receiver) {
-            @Override
-            public void onMessageSent(IMessage message) {
-                getLog().info("Sent message: " + message);
-            }
-
-            @Override
-            public boolean onMessageFailed(IMessage message, int retryed, MessageHandleType type, Throwable throwable,
-                IMessageConsumer consumer) {
-                getLog().info("Failed message: " + message);
-                return false;
-            }
-        };
+    RedisMessageCenter messageCenter(RedisMessageReceiver receiver, IMessageQueue messageQueue,
+        IMessageQueueEvents events, IMessageConsumerManager consumerManager) {
+        return new RedisMessageCenter(receiver, consumerManager, events,
+            Executors.newCachedThreadPool(new CustomizableThreadFactory("msg-center")));
     }
 }

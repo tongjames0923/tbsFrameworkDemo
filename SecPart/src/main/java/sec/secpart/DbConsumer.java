@@ -26,12 +26,12 @@ public class DbConsumer implements IMessageConsumer {
     }
 
     @Override
-    public void consume(IMessage message) {
+    public boolean consume(IMessage message) {
         MessageEntity entity = new MessageEntity();
         entity.setTag(message.getTag());
         entity.setWorkId(consumerId());
         entity.setMessageId(message.getMessageId());
         messageMapper.insert(entity);
-        message.setConsumed();
+        return true;
     }
 }
