@@ -47,12 +47,12 @@ public class Config {
             }
 
             @Override
-            public boolean consume(IMessage message) {
+            public void consume(IMessage message) {
                 if (logger == null) {
                     logger = LogUtil.getInstance().getLogger(this.getClass().getName() + ":" + this.consumerId());
                 }
                 logger.info("{} content:{}", message.getMessageId(), message.getTag());
-                return true;
+
             }
         };
     }
@@ -72,12 +72,12 @@ public class Config {
             }
 
             @Override
-            public boolean consume(IMessage message) {
+            public void consume(IMessage message) {
                 if (logger == null) {
                     logger = LogUtil.getInstance().getLogger(this.getClass().getName() + ":" + this.consumerId());
                 }
                 logger.info("{} 优先级:{}", message.getMessageId(), message.getPriority());
-                return true;
+
             }
         };
     }

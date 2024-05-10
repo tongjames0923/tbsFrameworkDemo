@@ -17,9 +17,10 @@ tbs:
         [
           "/api/**"
         ]
-
     sql:
       enable-log-interceptor: true
+    mq:
+      consumer-manager: tbs.framework.mq.impls.consumer.manager.PatternConsumerManager
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

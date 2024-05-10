@@ -31,6 +31,13 @@ spring:
     username: root
   redis:
     password: '123456'
+    lettuce:
+      pool:
+        enabled: true
+        max-active: 16
+        max-idle: 3
+        min-idle: 0
+        time-between-eviction-runs: 1s
   messages:
     basename: i18n/i18n
   jackson:

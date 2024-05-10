@@ -225,13 +225,13 @@ public class Controller {
     Random random = new Random();
 
     @RequestMapping(value = "testMsgCenterP", method = RequestMethod.POST)
-    public String testMsgCenterP(int t, int n, int range, String tag) throws Exception {
+    public String testMsgCenterP(int t, int n, int range, String tag, String topic) throws Exception {
         AtomicLong l = new AtomicLong(0);
         CountDownLatch countDownLatch = new CountDownLatch(t);
         for (int i = 0; i < t; i++) {
             threadUtil.runCollectionInBackground(() -> {
                 for (int j = 0; j < n / t; j++) {
-                    messageCenter.publish(new SimpleMessage("优先级", tag, null, random.nextInt(range)));
+                    messageCenter.publish(new SimpleMessage(topic, tag, null, random.nextInt(range)));
                     l.incrementAndGet();
                 }
                 countDownLatch.countDown();

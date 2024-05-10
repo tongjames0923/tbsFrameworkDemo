@@ -22,16 +22,15 @@ public class DbConsumer implements IMessageConsumer {
 
     @Override
     public Set<String> avaliableTopics() {
-        return new HashSet<>(Arrays.asList("^db\\.\\w+$"));
+        return new HashSet<>(Arrays.asList("db.*"));
     }
 
     @Override
-    public boolean consume(IMessage message) {
+    public void consume(IMessage message) {
         MessageEntity entity = new MessageEntity();
         entity.setTag(message.getTag());
         entity.setWorkId(consumerId());
         entity.setMessageId(message.getMessageId());
         messageMapper.insert(entity);
-        return true;
     }
 }

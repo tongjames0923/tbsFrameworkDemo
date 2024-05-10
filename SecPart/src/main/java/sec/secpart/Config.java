@@ -4,7 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import tbs.framework.base.log.ILogger;
 import tbs.framework.base.utils.LogUtil;
-import tbs.framework.mq.*;
+import tbs.framework.mq.IMessage;
+import tbs.framework.mq.IMessageConsumer;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -37,9 +38,8 @@ public class Config {
             }
 
             @Override
-            public boolean consume(IMessage message) {
+            public void consume(IMessage message) {
                 getLog().info("consume msg: {}", message.toString());
-                return true;
             }
         };
     }
