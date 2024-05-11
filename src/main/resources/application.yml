@@ -23,11 +23,13 @@ tbs:
       enable-log-interceptor: true
     mq:
       consumer-manager: tbs.framework.mq.consumer.manager.impls.PatternConsumerManager
+      auto-start-center: true
+      event-impl: tbs.framework.mq.event.LogMqEvent
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    password: '123456'
-    url: jdbc:mysql://127.0.0.1:4000/easy_home_money?serverTimezone=Asia/Shanghai&characterEncoding=UTF-8&useUnicode=true
+    password: '!Ty1997923'
+    url: jdbc:mysql://192.168.50.197:3306/easy_home_money?serverTimezone=Asia/Shanghai&characterEncoding=UTF-8&useUnicode=true
     username: root
   redis:
     password: '123456'
@@ -38,6 +40,7 @@ spring:
         max-idle: 3
         min-idle: 0
         time-between-eviction-runs: 1s
+    host: 192.168.50.197
   messages:
     basename: i18n/i18n
   jackson:

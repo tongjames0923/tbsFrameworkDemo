@@ -333,7 +333,7 @@ CREATE TABLE `message` (
   `insert_time` datetime DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `workId` (`workId`,`messageId`,`tag`,`insert_time`)
-) ENGINE=InnoDB AUTO_INCREMENT=654749 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=654749 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Records of message
