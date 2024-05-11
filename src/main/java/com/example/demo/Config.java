@@ -12,8 +12,10 @@ import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
 import tbs.framework.base.log.ILogger;
 import tbs.framework.base.utils.LogUtil;
-import tbs.framework.mq.message.IMessage;
+import tbs.framework.mq.center.AbstractMessageCenter;
+import tbs.framework.mq.center.impls.MessageQueueCenter;
 import tbs.framework.mq.consumer.IMessageConsumer;
+import tbs.framework.mq.message.IMessage;
 import tbs.framework.sql.interfaces.ISqlLogger;
 import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
 import tbs.framework.timer.AbstractTimer;
@@ -29,6 +31,11 @@ import java.util.stream.Collectors;
 
 @Configuration
 public class Config {
+
+    @Bean
+    AbstractMessageCenter center() {
+        return new MessageQueueCenter();
+    }
 
     @Bean
     IMessageConsumer consumer1() {
@@ -61,6 +68,7 @@ public class Config {
     IMessageConsumer consumer2() {
         return new IMessageConsumer() {
             ILogger logger = null;
+
             @Override
             public String consumerId() {
                 return "优先级测试";
@@ -81,8 +89,6 @@ public class Config {
             }
         };
     }
-
-
 
     @Bean
     AbstractTimer timer(final LogUtil logUtil) {

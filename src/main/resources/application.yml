@@ -24,7 +24,7 @@ tbs:
     mq:
       consumer-manager: tbs.framework.mq.consumer.manager.impls.PatternConsumerManager
       auto-start-center: true
-      event-impl: tbs.framework.mq.event.LogMqEvent
+      event-impl: tbs.framework.mq.event.impls.LogMqEvent
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
