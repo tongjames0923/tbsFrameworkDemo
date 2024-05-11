@@ -1,8 +1,8 @@
 package sec.secpart;
 
 import org.springframework.stereotype.Component;
-import tbs.framework.mq.IMessage;
-import tbs.framework.mq.IMessageConsumer;
+import tbs.framework.mq.message.IMessage;
+import tbs.framework.mq.consumer.IMessageConsumer;
 
 import javax.annotation.Resource;
 import java.util.Arrays;

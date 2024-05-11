@@ -2,7 +2,7 @@ tbs:
   framework:
     base:
       lock:
-        proxy-lock-type: tbs.framework.redis.impls.RedissonLockImpl
+        proxy-lock-type: tbs.framework.redis.impls.lock.RedissonLockImpl
         proxy-lock-time-unit: minutes
         proxy-lock-timeout: 1
       uuid-provider: tbs.framework.base.utils.impls.SnowFlakeUUID
@@ -20,7 +20,7 @@ tbs:
     sql:
       enable-log-interceptor: true
     mq:
-      consumer-manager: tbs.framework.mq.impls.consumer.manager.PatternConsumerManager
+      consumer-manager: tbs.framework.mq.consumer.manager.impls.PatternConsumerManager
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

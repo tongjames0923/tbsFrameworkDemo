@@ -4,8 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import tbs.framework.base.log.ILogger;
 import tbs.framework.base.utils.LogUtil;
-import tbs.framework.mq.IMessage;
-import tbs.framework.mq.IMessageConsumer;
+import tbs.framework.mq.message.IMessage;
+import tbs.framework.mq.consumer.IMessageConsumer;
 
 import java.util.Arrays;
 import java.util.HashSet;
