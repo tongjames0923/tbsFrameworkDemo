@@ -32,10 +32,10 @@ import java.util.stream.Collectors;
 @Configuration
 public class Config {
 
-    @Bean
-    AbstractMessageCenter center() {
-        return new MessageQueueCenter();
-    }
+//    @Bean
+//    AbstractMessageCenter center() {
+//        return new MessageQueueCenter();
+//    }
 
     @Bean
     IMessageConsumer consumer1() {
