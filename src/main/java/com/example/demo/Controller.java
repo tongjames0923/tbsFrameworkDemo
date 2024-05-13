@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.fastjson2.JSON;
 import lombok.Data;
 import org.springframework.context.annotation.Lazy;
@@ -17,7 +18,15 @@ import tbs.framework.base.proxy.impls.LockProxy;
 import tbs.framework.base.utils.*;
 import tbs.framework.cache.ICacheService;
 import tbs.framework.mq.center.AbstractMessageCenter;
+import tbs.framework.mq.consumer.IMessageConsumer;
+import tbs.framework.mq.consumer.manager.IMessageConsumerManager;
+import tbs.framework.mq.message.IMessage;
 import tbs.framework.mq.message.impls.SimpleMessage;
+import tbs.framework.mq.receiver.IMessageReceiver;
+import tbs.framework.mq.receiver.impls.AbstractIdentityReceiver;
+import tbs.framework.redis.impls.lock.RedisTaksBlockLock;
+import tbs.framework.redis.impls.mq.receiver.RedisChannelReceiver;
+import tbs.framework.redis.impls.mq.receiver.RedisMessageConnector;
 import tbs.framework.sql.model.Page;
 import tbs.framework.sql.utils.TransactionUtil;
 import tbs.framework.timer.AbstractTimer;
@@ -239,6 +248,46 @@ public class Controller {
         }
         countDownLatch.await();
         return l.toString();
+    }
+
+    @Resource
+    IMessageConsumerManager manager;
+
+    @RequestMapping(value = "testCloseTopic", method = RequestMethod.POST)
+    public String testTopicClose(String topic) throws Exception {
+        List<IMessageReceiver> receivers = new LinkedList<>();
+        for (IMessageReceiver messageReceiver : messageCenter.getReceivers()) {
+            if (messageReceiver instanceof AbstractIdentityReceiver) {
+                if (manager.match(topic, messageReceiver.acceptTopics())) {
+                    receivers.add(messageReceiver);
+                }
+            }
+        }
+        messageCenter.getConnector().ifPresent((p) -> {
+            p.invalidateReceivers(receivers);
+        });
+        return JSON.toJSONString(receivers);
+    }
+
+    @RequestMapping(value = "testOpenTopic", method = RequestMethod.POST)
+    public String testTopicOpen(String topic) throws Exception {
+        messageCenter.addReceivers(new RedisChannelReceiver(messageCenter, new IMessageConsumer() {
+            @Override
+            public String consumerId() {
+                return topic;
+            }
+
+            @Override
+            public Set<String> avaliableTopics() {
+                return new HashSet<>(Arrays.asList(topic));
+            }
+
+            @Override
+            public void consume(IMessage message) {
+                logger.info("i am a addable consumer");
+            }
+        }, true, SpringUtil.getBean(RedisTaksBlockLock.class), SpringUtil.getBean(RedisMessageConnector.class)));
+        return "ok";
     }
 
     @RequestMapping(value = "search", method = RequestMethod.POST)

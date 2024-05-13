@@ -25,6 +25,9 @@ tbs:
       consumer-manager: tbs.framework.mq.consumer.manager.impls.PatternConsumerManager
       auto-start-center: true
       event-impl: tbs.framework.mq.event.impls.LogMqEvent
+    redis:
+      mq:
+        message-serializer-class: org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
