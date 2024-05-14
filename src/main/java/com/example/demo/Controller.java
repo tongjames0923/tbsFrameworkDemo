@@ -1,7 +1,6 @@
 package com.example.demo;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.fastjson2.JSON;
 import lombok.Data;
 import org.springframework.context.annotation.Lazy;
@@ -24,9 +23,7 @@ import tbs.framework.mq.receiver.IMessageReceiver;
 import tbs.framework.mq.receiver.impls.AbstractIdentityReceiver;
 import tbs.framework.proxy.IProxy;
 import tbs.framework.proxy.impls.LockProxy;
-import tbs.framework.redis.impls.lock.RedisTaksBlockLock;
 import tbs.framework.redis.impls.mq.receiver.RedisChannelReceiver;
-import tbs.framework.redis.impls.mq.receiver.RedisMessageConnector;
 import tbs.framework.sql.model.Page;
 import tbs.framework.sql.utils.TransactionUtil;
 import tbs.framework.timer.AbstractTimer;
@@ -278,27 +275,27 @@ public class Controller {
         });
         return JSON.toJSONString(receivers);
     }
-
-    @RequestMapping(value = "testOpenTopic", method = RequestMethod.POST)
-    public String testTopicOpen(String topic) throws Exception {
-        messageCenter.addReceivers(new RedisChannelReceiver(messageCenter, new IMessageConsumer() {
-            @Override
-            public String consumerId() {
-                return topic;
-            }
-
-            @Override
-            public Set<String> avaliableTopics() {
-                return new HashSet<>(Arrays.asList(topic));
-            }
-
-            @Override
-            public void consume(IMessage message) {
-                autoLogger.info("i am a addable consumer");
-            }
-        }, true, SpringUtil.getBean(RedisTaksBlockLock.class), SpringUtil.getBean(RedisMessageConnector.class)));
-        return "ok";
-    }
+//
+//    @RequestMapping(value = "testOpenTopic", method = RequestMethod.POST)
+//    public String testTopicOpen(String topic) throws Exception {
+//        messageCenter.addReceivers(new RedisChannelReceiver(new IMessageConsumer() {
+//            @Override
+//            public String consumerId() {
+//                return topic;
+//            }
+//
+//            @Override
+//            public Set<String> avaliableTopics() {
+//                return new HashSet<>(Arrays.asList(topic));
+//            }
+//
+//            @Override
+//            public void consume(IMessage message) {
+//                autoLogger.info("i am a addable consumer");
+//            }
+//        }));
+//        return "ok";
+//    }
 
     @RequestMapping(value = "search", method = RequestMethod.POST)
     public List<LoginInfo> sysUserList(@RequestBody final LoginInfoQO qo, @RequestParam final int p, @RequestParam final int n) {

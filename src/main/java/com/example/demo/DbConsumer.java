@@ -1,14 +1,17 @@
 package com.example.demo;
 
 import org.springframework.stereotype.Component;
-import tbs.framework.mq.message.IMessage;
 import tbs.framework.mq.consumer.IMessageConsumer;
+import tbs.framework.mq.message.IMessage;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @author abstergo
+ */
 @Component
 public class DbConsumer implements IMessageConsumer {
 
@@ -18,6 +21,10 @@ public class DbConsumer implements IMessageConsumer {
     @Override
     public String consumerId() {
         return "DB-1";
+    }
+
+    public DbConsumer() {
+        int a = 10;
     }
 
     @Override
