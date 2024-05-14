@@ -15,15 +15,10 @@ import tbs.framework.cache.ICacheService;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.mq.center.AbstractMessageCenter;
-import tbs.framework.mq.consumer.IMessageConsumer;
 import tbs.framework.mq.consumer.manager.IMessageConsumerManager;
-import tbs.framework.mq.message.IMessage;
 import tbs.framework.mq.message.impls.SimpleMessage;
-import tbs.framework.mq.receiver.IMessageReceiver;
-import tbs.framework.mq.receiver.impls.AbstractIdentityReceiver;
 import tbs.framework.proxy.IProxy;
 import tbs.framework.proxy.impls.LockProxy;
-import tbs.framework.redis.impls.mq.receiver.RedisChannelReceiver;
 import tbs.framework.sql.model.Page;
 import tbs.framework.sql.utils.TransactionUtil;
 import tbs.framework.timer.AbstractTimer;
@@ -262,18 +257,15 @@ public class Controller {
 
     @RequestMapping(value = "testCloseTopic", method = RequestMethod.POST)
     public String testTopicClose(String topic) throws Exception {
-        List<IMessageReceiver> receivers = new LinkedList<>();
-        for (IMessageReceiver messageReceiver : messageCenter.getReceivers()) {
-            if (messageReceiver instanceof AbstractIdentityReceiver) {
-                if (manager.match(topic, messageReceiver.acceptTopics())) {
-                    receivers.add(messageReceiver);
-                }
-            }
-        }
-        messageCenter.getConnector().ifPresent((p) -> {
-            p.invalidateReceivers(receivers);
-        });
-        return JSON.toJSONString(receivers);
+        //        List<IMessageReceiver> receivers = new LinkedList<>();
+        //        for (IMessageReceiver messageReceiver : messageCenter.getReceivers()) {
+        //            if (messageReceiver instanceof AbstractIdentityReceiver) {
+        //                if (manager.match(topic, messageReceiver.acceptTopics())) {
+        //                    receivers.add(messageReceiver);
+        //                }
+        //            }
+        //        }
+        return JSON.toJSONString("");
     }
 //
 //    @RequestMapping(value = "testOpenTopic", method = RequestMethod.POST)
