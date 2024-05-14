@@ -12,11 +12,9 @@ import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.base.constants.BeanNameConstant;
 import tbs.framework.base.intefaces.impls.chain.AbstractChain;
 import tbs.framework.base.intefaces.impls.chain.AbstractCollectiveChain;
-import tbs.framework.log.ILogger;
-import tbs.framework.proxy.IProxy;
-import tbs.framework.proxy.impls.LockProxy;
-import tbs.framework.base.utils.*;
 import tbs.framework.cache.ICacheService;
+import tbs.framework.log.ILogger;
+import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.mq.center.AbstractMessageCenter;
 import tbs.framework.mq.consumer.IMessageConsumer;
 import tbs.framework.mq.consumer.manager.IMessageConsumerManager;
@@ -24,13 +22,18 @@ import tbs.framework.mq.message.IMessage;
 import tbs.framework.mq.message.impls.SimpleMessage;
 import tbs.framework.mq.receiver.IMessageReceiver;
 import tbs.framework.mq.receiver.impls.AbstractIdentityReceiver;
+import tbs.framework.proxy.IProxy;
+import tbs.framework.proxy.impls.LockProxy;
 import tbs.framework.redis.impls.lock.RedisTaksBlockLock;
 import tbs.framework.redis.impls.mq.receiver.RedisChannelReceiver;
 import tbs.framework.redis.impls.mq.receiver.RedisMessageConnector;
 import tbs.framework.sql.model.Page;
 import tbs.framework.sql.utils.TransactionUtil;
 import tbs.framework.timer.AbstractTimer;
-import tbs.framework.utils.*;
+import tbs.framework.utils.ChainUtil;
+import tbs.framework.utils.MultilingualUtil;
+import tbs.framework.utils.ThreadUtil;
+import tbs.framework.utils.UuidUtil;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
@@ -41,7 +44,6 @@ import java.util.concurrent.atomic.AtomicLong;
 @RestController
 public class Controller {
 
-    private final ILogger logger;
 
     @Resource
     LockProxy lockProxy;
@@ -55,15 +57,14 @@ public class Controller {
     @Resource
     MultilingualUtil multilingualUtil;
 
+    @AutoLogger
+    public ILogger autoLogger;
+
     @Resource
     AbstractTimer timer;
 
     @Resource
     HomeMapper homeMapper;
-
-    public Controller(final LogUtil util) {
-        this.logger = util.getLogger(Controller.class.getName());
-    }
 
     @Resource
     @Lazy
@@ -208,6 +209,14 @@ public class Controller {
         return true;
     }
 
+    @RequestMapping(value = "testLog", method = RequestMethod.GET)
+    public String logTest(String value) throws Exception {
+        autoLogger.info("this is a  logger for test {}", value);
+
+        return "OK";
+    }
+
+
     @RequestMapping(value = "testLock", method = RequestMethod.GET)
     public String lockTest() throws Exception {
         asyncTest.test1();
@@ -285,7 +294,7 @@ public class Controller {
 
             @Override
             public void consume(IMessage message) {
-                logger.info("i am a addable consumer");
+                autoLogger.info("i am a addable consumer");
             }
         }, true, SpringUtil.getBean(RedisTaksBlockLock.class), SpringUtil.getBean(RedisMessageConnector.class)));
         return "ok";
