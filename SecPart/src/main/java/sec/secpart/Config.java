@@ -2,8 +2,8 @@ package sec.secpart;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import tbs.framework.base.log.ILogger;
-import tbs.framework.base.utils.LogUtil;
+import tbs.framework.log.ILogger;
+import tbs.framework.utils.LogUtil;
 import tbs.framework.mq.message.IMessage;
 import tbs.framework.mq.consumer.IMessageConsumer;
 
