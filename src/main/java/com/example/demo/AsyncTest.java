@@ -3,16 +3,16 @@ package com.example.demo;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import tbs.framework.base.constants.BeanNameConstant;
-import tbs.framework.lock.annotations.LockIt;
-import tbs.framework.lock.expections.ObtainLockFailException;
-import tbs.framework.log.ILogger;
-import tbs.framework.proxy.impls.LockProxy;
-import tbs.framework.utils.LogUtil;
 import tbs.framework.cache.annotations.CacheLoading;
 import tbs.framework.cache.annotations.CacheUnloading;
 import tbs.framework.cache.impls.broker.NullableCacheBroker;
 import tbs.framework.cache.impls.eliminate.ExpireCacheStrategy;
+import tbs.framework.lock.annotations.LockIt;
+import tbs.framework.lock.expections.ObtainLockFailException;
+import tbs.framework.log.ILogger;
+import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.multilingual.annotations.Translated;
+import tbs.framework.proxy.impls.LockProxy;
 
 import javax.annotation.Resource;
 import java.util.concurrent.CompletableFuture;
@@ -21,13 +21,14 @@ import java.util.concurrent.Future;
 @Component
 public class AsyncTest {
 
-    private final ILogger logger;
+    @AutoLogger
+    private ILogger logger;
 
     @Resource
     LockProxy lockProxy;
 
-    public AsyncTest(final LogUtil logUtil) {
-        logger = logUtil.getLogger(AsyncTest.class.getName());
+    public AsyncTest() {
+
     }
 
     @CacheUnloading(key = "#args[0]", eliminationStrategy = ExpireCacheStrategy.class, intArgs = {60})

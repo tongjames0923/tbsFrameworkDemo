@@ -1,11 +1,5 @@
 package com.example.demo;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
@@ -17,9 +11,9 @@ import tbs.framework.auth.interfaces.impls.CopyRuntimeDataExchanger;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
 import tbs.framework.log.ILogger;
+import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.mq.consumer.IMessageConsumer;
 import tbs.framework.mq.message.IMessage;
-import tbs.framework.redis.impls.mq.receiver.RedisChannelReceiver;
 import tbs.framework.sql.interfaces.ISqlLogger;
 import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
 import tbs.framework.timer.AbstractTimer;
@@ -76,6 +70,7 @@ public class Config {
     @Bean
     IMessageConsumer consumer2() {
         return new IMessageConsumer() {
+            @AutoLogger
             ILogger logger = null;
 
             @Override
@@ -100,14 +95,14 @@ public class Config {
     }
 
     @Bean
-    AbstractTimer timer(final LogUtil logUtil) {
+    AbstractTimer timer() {
         return new ScheduledExecutorTimer(
-            Executors.newScheduledThreadPool(12, new CustomizableThreadFactory("timer-thread")), logUtil);
+            Executors.newScheduledThreadPool(12, new CustomizableThreadFactory("timer-thread")));
     }
 
     @Bean
-    ISqlLogger sqlLogger(LogUtil logUtil) {
-        return new SimpleJsonLogger(logUtil);
+    ISqlLogger sqlLogger() {
+        return new SimpleJsonLogger();
     }
 
     private static class ResultExchanger extends CopyRuntimeDataExchanger<Result> {
@@ -127,9 +122,10 @@ public class Config {
     }
 
     @Bean
-    IErrorHandler resultIErrorHandler(final LogUtil logUtil) {
+    IErrorHandler resultIErrorHandler() {
         return new IErrorHandler() {
-            private final ILogger logger = logUtil.getLogger("resultIErrorHandler");
+            @AutoLogger
+            private ILogger logger;
 
             @Override
             public Object handleError(final Throwable ex) {
