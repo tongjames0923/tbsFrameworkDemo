@@ -10,6 +10,7 @@ import tbs.framework.auth.interfaces.IUserModelPicker;
 import tbs.framework.auth.interfaces.impls.CopyRuntimeDataExchanger;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
+import tbs.framework.base.intefaces.IChainProvider;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.mq.consumer.IMessageConsumer;
@@ -19,6 +20,7 @@ import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
 import tbs.framework.timer.AbstractTimer;
 import tbs.framework.timer.impls.ScheduledExecutorTimer;
 import tbs.framework.utils.LogUtil;
+import tbs.framework.utils.impls.ChainLoggerUtil;
 import tbs.framework.xxl.interfaces.IJsonJobHandler;
 import tbs.framework.xxl.interfaces.IXXLJobsConfig;
 
@@ -34,11 +36,15 @@ import java.util.stream.Collectors;
 @Configuration
 public class Config {
 
+    @Bean(ChainLoggerUtil.LOGGER_CHAIN)
+    IChainProvider logChain() {
+        return new LogDbChainProvider();
+    }
 
-//    @Bean
-//    AbstractMessageCenter center() {
-//        return new MessageQueueCenter();
-//    }
+    //    @Bean
+    //    AbstractMessageCenter center() {
+    //        return new MessageQueueCenter();
+    //    }
 
     @Bean
     IMessageConsumer consumer1() {
