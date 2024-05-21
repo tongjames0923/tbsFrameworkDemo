@@ -13,15 +13,14 @@ import tbs.framework.auth.model.UserModel;
 import tbs.framework.log.AbstractLogChainProvider;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
-import tbs.framework.log.impls.Slf4jLogger;
 import tbs.framework.mq.consumer.IMessageConsumer;
 import tbs.framework.mq.message.IMessage;
 import tbs.framework.sql.interfaces.ISqlLogger;
 import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
 import tbs.framework.timer.AbstractTimer;
 import tbs.framework.timer.impls.ScheduledExecutorTimer;
-import tbs.framework.utils.LogUtil;
-import tbs.framework.utils.impls.ChainLoggerUtil;
+import tbs.framework.utils.LogFactory;
+import tbs.framework.utils.impls.ChainLoggerFactory;
 import tbs.framework.xxl.interfaces.IJsonJobHandler;
 import tbs.framework.xxl.interfaces.IXXLJobsConfig;
 
@@ -37,7 +36,7 @@ import java.util.stream.Collectors;
 @Configuration
 public class Config {
 
-    @Bean(ChainLoggerUtil.LOGGER_CHAIN)
+    @Bean(ChainLoggerFactory.LOGGER_CHAIN)
     AbstractLogChainProvider logChain() {
         return new LogDbChainProvider();
     }
@@ -66,7 +65,7 @@ public class Config {
             @Override
             public void consume(IMessage message) {
                 if (logger == null) {
-                    logger = LogUtil.getInstance().getLogger(this.getClass().getName() + ":" + this.consumerId());
+                    logger = LogFactory.getInstance().getLogger(this.getClass().getName() + ":" + this.consumerId());
                 }
                 logger.info("{} content:{}", message.getMessageId(), message.getTag());
 
@@ -93,7 +92,7 @@ public class Config {
             @Override
             public void consume(IMessage message) {
                 if (logger == null) {
-                    logger = LogUtil.getInstance().getLogger(this.getClass().getName() + ":" + this.consumerId());
+                    logger = LogFactory.getInstance().getLogger(this.getClass().getName() + ":" + this.consumerId());
                 }
                 logger.info("{} 优先级:{}", message.getMessageId(), message.getPriority());
 
@@ -109,7 +108,7 @@ public class Config {
 
     @Bean
     ISqlLogger sqlLogger() {
-        return new SimpleJsonLogger(new Slf4jLogger(SimpleJsonLogger.class.getName()));
+        return new SimpleJsonLogger();
     }
 
     private static class ResultExchanger extends CopyRuntimeDataExchanger<Result> {

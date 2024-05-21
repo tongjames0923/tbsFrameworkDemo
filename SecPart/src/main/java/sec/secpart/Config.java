@@ -3,7 +3,7 @@ package sec.secpart;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import tbs.framework.log.ILogger;
-import tbs.framework.utils.LogUtil;
+import tbs.framework.utils.LogFactory;
 import tbs.framework.mq.message.IMessage;
 import tbs.framework.mq.consumer.IMessageConsumer;
 
@@ -18,7 +18,7 @@ public class Config {
 
     private ILogger getLog() {
         if (l == null) {
-            l = LogUtil.getInstance().getLogger(this.getClass().getName());
+            l = LogFactory.getInstance().getLogger(this.getClass().getName());
         }
         return l;
     }

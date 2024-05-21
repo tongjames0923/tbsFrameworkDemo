@@ -6,7 +6,7 @@ tbs:
         proxy-lock-time-unit: minutes
         proxy-lock-timeout: 1
       uuid-provider: tbs.framework.utils.impls.SnowFlakeUUID
-      logger-provider: tbs.framework.utils.impls.ChainLoggerUtil
+      logger-provider: tbs.framework.utils.impls.ChainLoggerFactory
     locale:
       type: header
       value: X-LANG
