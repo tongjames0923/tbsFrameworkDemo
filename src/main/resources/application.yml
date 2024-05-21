@@ -58,5 +58,5 @@ mybatis:
     map-underscore-to-camel-case: true
 logging:
   level:
-    tbs.framework: info
+    tbs.framework: debug
     com.example.demo: info

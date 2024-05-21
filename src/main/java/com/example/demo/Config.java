@@ -10,9 +10,10 @@ import tbs.framework.auth.interfaces.IUserModelPicker;
 import tbs.framework.auth.interfaces.impls.CopyRuntimeDataExchanger;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
-import tbs.framework.base.intefaces.IChainProvider;
+import tbs.framework.log.AbstractLogChainProvider;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
+import tbs.framework.log.impls.Slf4jLogger;
 import tbs.framework.mq.consumer.IMessageConsumer;
 import tbs.framework.mq.message.IMessage;
 import tbs.framework.sql.interfaces.ISqlLogger;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
 public class Config {
 
     @Bean(ChainLoggerUtil.LOGGER_CHAIN)
-    IChainProvider logChain() {
+    AbstractLogChainProvider logChain() {
         return new LogDbChainProvider();
     }
 
@@ -108,7 +109,7 @@ public class Config {
 
     @Bean
     ISqlLogger sqlLogger() {
-        return new SimpleJsonLogger();
+        return new SimpleJsonLogger(new Slf4jLogger(SimpleJsonLogger.class.getName()));
     }
 
     private static class ResultExchanger extends CopyRuntimeDataExchanger<Result> {

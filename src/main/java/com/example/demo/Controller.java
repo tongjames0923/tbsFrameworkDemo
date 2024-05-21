@@ -11,6 +11,9 @@ import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.base.constants.BeanNameConstant;
 import tbs.framework.base.intefaces.impls.chain.AbstractChain;
 import tbs.framework.base.intefaces.impls.chain.AbstractCollectiveChain;
+import tbs.framework.base.structs.ITree;
+import tbs.framework.base.structs.impls.SimpleMultibranchTree;
+import tbs.framework.base.structs.impls.TreeUtil;
 import tbs.framework.cache.ICacheService;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
@@ -33,6 +36,9 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * @author abstergo
+ */
 @RestController
 public class Controller {
 
@@ -292,5 +298,25 @@ public class Controller {
     @RequestMapping(value = "search", method = RequestMethod.POST)
     public List<LoginInfo> sysUserList(@RequestBody final LoginInfoQO qo, @RequestParam final int p, @RequestParam final int n) {
         return this.loginInfoMapper.queryByQO(qo, new Page(p, n));
+    }
+
+    @RequestMapping(value = "cmpTest", method = RequestMethod.GET)
+    public String cmpTest() {
+        ITree<Integer> root = new SimpleMultibranchTree<>();
+        root.setValue(0);
+        ITree<Integer> f1 = TreeUtil.appendNode(root, 3, TreeUtil::multiBranchTree);
+        TreeUtil.appendNode(root, 5, TreeUtil::multiBranchTree);
+        TreeUtil.appendNode(f1, 11, TreeUtil::multiBranchTree);
+        TreeUtil.foreach(root, null, new TreeUtil.ITreeNodeForeach<Integer>() {
+
+            @Override
+            public void accept(ITree<Integer> patent, Integer v, int level) {
+                for (int i = 0; i < level; i++) {
+                    System.out.print("-");
+                }
+                System.out.printf("%d\n", v);
+            }
+        });
+        return JSON.toJSONString(root);
     }
 }
