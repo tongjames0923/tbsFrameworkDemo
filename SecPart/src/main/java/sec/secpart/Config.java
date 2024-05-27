@@ -3,7 +3,7 @@ package sec.secpart;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import tbs.framework.log.ILogger;
-import tbs.framework.utils.LogFactory;
+import tbs.framework.base.utils.LogFactory;
 import tbs.framework.mq.message.IMessage;
 import tbs.framework.mq.consumer.IMessageConsumer;
 

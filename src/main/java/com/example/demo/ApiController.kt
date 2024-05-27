@@ -1,35 +1,32 @@
-package com.example.demo;
+package com.example.demo
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import tbs.framework.auth.annotations.PermissionValidated;
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
+import tbs.framework.auth.annotations.PermissionValidated
 
 /**
  * @author Abstergo
  */
 @RestController
 @RequestMapping("/api")
-public class ApiController {
-
+class ApiController {
     @DbPermission
     @PermissionValidated("70")
     @PermissionValidated("66")
     @RequestMapping("a")
-    public String a() {
-
-        return "Hello World a";
+    fun a(): String {
+        return "Hello World a"
     }
 
     @RequestMapping("b")
     @PermissionValidated("PASS")
-    public String b() {
-        return "Hello World b";
+    fun b(): String {
+        return "Hello World b"
     }
 
     @RequestMapping("c")
     @PermissionValidated("NOT PASS")
-    public String c() {
-        return "Hello World c";
+    fun c(): String {
+        return "Hello World c"
     }
-
 }

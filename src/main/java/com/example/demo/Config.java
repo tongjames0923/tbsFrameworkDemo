@@ -19,7 +19,7 @@ import tbs.framework.sql.interfaces.ISqlLogger;
 import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
 import tbs.framework.timer.AbstractTimer;
 import tbs.framework.timer.impls.ScheduledExecutorTimer;
-import tbs.framework.utils.LogFactory;
+import tbs.framework.base.utils.LogFactory;
 import tbs.framework.utils.impls.ChainLoggerFactory;
 import tbs.framework.xxl.interfaces.IJsonJobHandler;
 import tbs.framework.xxl.interfaces.IXXLJobsConfig;
