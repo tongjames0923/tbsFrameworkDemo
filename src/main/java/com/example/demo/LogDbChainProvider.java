@@ -1,7 +1,7 @@
 package com.example.demo;
 
 import com.alibaba.fastjson2.JSON;
-import tbs.framework.base.intefaces.impls.chain.AbstractChain;
+import tbs.framework.base.interfaces.impls.chain.AbstractChain;
 import tbs.framework.log.AbstractLogChainProvider;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.impls.ChainLogger;

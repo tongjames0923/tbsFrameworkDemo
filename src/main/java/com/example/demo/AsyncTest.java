@@ -2,6 +2,8 @@ package com.example.demo;
 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import tbs.framework.async.task.annotations.AsyncTaskId;
+import tbs.framework.async.task.annotations.AsyncWithCallback;
 import tbs.framework.base.constants.BeanNameConstant;
 import tbs.framework.cache.annotations.CacheLoading;
 import tbs.framework.cache.annotations.CacheUnloading;
@@ -32,7 +34,7 @@ public class AsyncTest {
     }
 
     @CacheUnloading(key = "#args[0]", eliminationStrategy = ExpireCacheStrategy.class, intArgs = {60})
-    @CacheLoading(key = "#args[0]",cacheBroker = NullableCacheBroker.class)
+    @CacheLoading(key = "#args[0]", cacheBroker = NullableCacheBroker.class)
     public String testCache(int id) throws InterruptedException {
         Thread.currentThread().join(1000);
         return null;
@@ -60,15 +62,16 @@ public class AsyncTest {
         });
     }
 
-    @Async(BeanNameConstant.ASYNC_EXECUTOR)
+    @AsyncWithCallback
     @LockIt(lockId = "h")
-    public void test1() throws ObtainLockFailException {
+    public String test1(@AsyncTaskId String id) throws ObtainLockFailException {
         try {
-            Thread.currentThread().join(1000);
+            Thread.currentThread().join(5000);
         } catch (final InterruptedException e) {
             throw new RuntimeException(e);
         }
         this.logger.info("Hello World!");
+        return "Hello World!~~~~";
     }
 
     @Translated

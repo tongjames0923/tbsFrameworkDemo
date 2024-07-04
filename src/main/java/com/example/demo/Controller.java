@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import tbs.framework.auth.annotations.ApplyRuntimeData;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.base.constants.BeanNameConstant;
-import tbs.framework.base.intefaces.impls.chain.AbstractChain;
-import tbs.framework.base.intefaces.impls.chain.AbstractCollectiveChain;
+import tbs.framework.base.interfaces.impls.chain.AbstractChain;
+import tbs.framework.base.interfaces.impls.chain.AbstractCollectiveChain;
 import tbs.framework.base.structs.ITree;
 import tbs.framework.base.structs.impls.SimpleMultibranchTree;
 import tbs.framework.base.structs.impls.TreeUtil;
@@ -42,7 +42,6 @@ import java.util.concurrent.atomic.AtomicLong;
 @RestController
 public class Controller {
 
-
     @Resource
     LockProxy lockProxy;
 
@@ -67,7 +66,6 @@ public class Controller {
     @Resource
     @Lazy
     AbstractMessageCenter messageCenter;
-
 
     @Resource
     RuntimeData runtimeData;
@@ -110,13 +108,13 @@ public class Controller {
 
     @RequestMapping("testTransication")
     public String testTransication() {
-        LoginInfo[] loginInfos = {
-            new LoginInfo(null, 1L, Integer.valueOf(1).byteValue(), new Date(), Integer.valueOf(1).byteValue(), 1L,
+        LoginInfo[] loginInfos =
+            {new LoginInfo(null, 1L, Integer.valueOf(1).byteValue(), new Date(), Integer.valueOf(1).byteValue(), 1L,
                 null),
-            new LoginInfo(null, 2L, Integer.valueOf(1).byteValue(), new Date(), Integer.valueOf(1).byteValue(), 1L,
-                null),
-            new LoginInfo(null, 3L, Integer.valueOf(1).byteValue(), new Date(), Integer.valueOf(1).byteValue(), 1L,
-                null)};
+                new LoginInfo(null, 2L, Integer.valueOf(1).byteValue(), new Date(), Integer.valueOf(1).byteValue(), 1L,
+                    null),
+                new LoginInfo(null, 3L, Integer.valueOf(1).byteValue(), new Date(), Integer.valueOf(1).byteValue(), 1L,
+                    null)};
         TransactionUtil.getInstance().executeTransaction(Propagation.REQUIRED.value(),
             () -> loginInfoMapper.insertList(Arrays.asList(loginInfos)));
         return JSON.toJSONString(loginInfos);
@@ -158,9 +156,9 @@ public class Controller {
 
     @RequestMapping(value = "testCache", method = RequestMethod.GET)
     public String cacheTest(int id) throws Exception {
-        String r= asyncTest.testCache(id);
+        String r = asyncTest.testCache(id);
 
-        return StrUtil.isEmpty(r)?"null":r;
+        return StrUtil.isEmpty(r) ? "null" : r;
     }
 
     @Resource
@@ -214,12 +212,12 @@ public class Controller {
         return "OK";
     }
 
-
-    @RequestMapping(value = "testLock", method = RequestMethod.GET)
+    @RequestMapping(value = "testAsyncTask", method = RequestMethod.GET)
     public String lockTest() throws Exception {
-        asyncTest.test1();
+        String uid = UuidUtil.getUuid();
+        asyncTest.test1(uid);
 
-        return asyncTest.test().get();
+        return uid;
     }
 
     @Data
@@ -273,30 +271,31 @@ public class Controller {
         //        }
         return JSON.toJSONString("");
     }
-//
-//    @RequestMapping(value = "testOpenTopic", method = RequestMethod.POST)
-//    public String testTopicOpen(String topic) throws Exception {
-//        messageCenter.addReceivers(new RedisChannelReceiver(new IMessageConsumer() {
-//            @Override
-//            public String consumerId() {
-//                return topic;
-//            }
-//
-//            @Override
-//            public Set<String> avaliableTopics() {
-//                return new HashSet<>(Arrays.asList(topic));
-//            }
-//
-//            @Override
-//            public void consume(IMessage message) {
-//                autoLogger.info("i am a addable consumer");
-//            }
-//        }));
-//        return "ok";
-//    }
+    //
+    //    @RequestMapping(value = "testOpenTopic", method = RequestMethod.POST)
+    //    public String testTopicOpen(String topic) throws Exception {
+    //        messageCenter.addReceivers(new RedisChannelReceiver(new IMessageConsumer() {
+    //            @Override
+    //            public String consumerId() {
+    //                return topic;
+    //            }
+    //
+    //            @Override
+    //            public Set<String> avaliableTopics() {
+    //                return new HashSet<>(Arrays.asList(topic));
+    //            }
+    //
+    //            @Override
+    //            public void consume(IMessage message) {
+    //                autoLogger.info("i am a addable consumer");
+    //            }
+    //        }));
+    //        return "ok";
+    //    }
 
     @RequestMapping(value = "search", method = RequestMethod.POST)
-    public List<LoginInfo> sysUserList(@RequestBody final LoginInfoQO qo, @RequestParam final int p, @RequestParam final int n) {
+    public List<LoginInfo> sysUserList(@RequestBody final LoginInfoQO qo, @RequestParam final int p,
+        @RequestParam final int n) {
         return this.loginInfoMapper.queryByQO(qo, new Page(p, n));
     }
 

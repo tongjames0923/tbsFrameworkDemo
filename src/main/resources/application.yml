@@ -6,7 +6,7 @@ tbs:
         proxy-lock-time-unit: minutes
         proxy-lock-timeout: 1
       uuid-provider: tbs.framework.utils.impls.SnowFlakeUUID
-      logger-provider: tbs.framework.utils.impls.ChainLoggerFactory
+      logger-provider: tbs.framework.utils.impls.Slf4JLoggerFactory
     locale:
       type: header
       value: X-LANG
@@ -21,7 +21,7 @@ tbs:
     swagger:
       base-package: com.example.demo
     sql:
-      enable-log-interceptor: true
+      enable-log-interceptor: false
     mq:
       consumer-manager: tbs.framework.mq.consumer.manager.impls.PatternConsumerManager
       auto-start-center: true
@@ -29,6 +29,11 @@ tbs:
     redis:
       mq:
         message-serializer-class: org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
+    async:
+      task:
+        receipt-consumer: tbs.framework.redis.impls.async.RedisAsyncReceiptConsumer
+        redis:
+          timeout: 20s
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -58,5 +63,5 @@ mybatis:
     map-underscore-to-camel-case: true
 logging:
   level:
-    tbs.framework: debug
+    tbs.framework: info
     com.example.demo: info
