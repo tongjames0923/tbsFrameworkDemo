@@ -31,9 +31,10 @@ tbs:
         message-serializer-class: org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
     async:
       task:
-        receipt-consumer: tbs.framework.redis.impls.async.RedisAsyncReceiptConsumer
-        redis:
-          timeout: 20s
+        receipt-broker: tbs.framework.cache.impls.CachedAsyncReceiptBroker
+        receipt-timeout: 30
+    cache:
+      cache-service-class: tbs.framework.redis.impls.RedisCacheServiceImpl
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

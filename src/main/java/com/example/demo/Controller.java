@@ -14,7 +14,7 @@ import tbs.framework.base.interfaces.impls.chain.AbstractCollectiveChain;
 import tbs.framework.base.structs.ITree;
 import tbs.framework.base.structs.impls.SimpleMultibranchTree;
 import tbs.framework.base.structs.impls.TreeUtil;
-import tbs.framework.cache.ICacheService;
+import tbs.framework.cache.impls.managers.ImportedTimeBaseCacheManager;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.mq.center.AbstractMessageCenter;
@@ -32,6 +32,7 @@ import tbs.framework.utils.UuidUtil;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
@@ -71,14 +72,14 @@ public class Controller {
     RuntimeData runtimeData;
 
     @Resource
-    ICacheService cacheService;
+    ImportedTimeBaseCacheManager cacheService;
 
     @RequestMapping(value = "put", method = RequestMethod.GET)
     @ApplyRuntimeData
     public Result put(@RequestParam final String key, @RequestParam final String value, @RequestParam final long exp) {
         this.cacheService.put(key, value, false);
         if (0 < exp) {
-            this.cacheService.expire(key, exp);
+            this.cacheService.expire(key, Duration.ofSeconds(exp));
         }
         return new Result("", 1, 0, null, null, null);
     }
@@ -86,14 +87,16 @@ public class Controller {
     @RequestMapping(value = "get", method = RequestMethod.GET)
     @ApplyRuntimeData
     public Result get(@RequestParam final String key) {
-        return new Result("", 1, 0, this.cacheService.get(key, true, 5).orElse("null"), null, null);
+        return new Result("", 1, 0,
+            Optional.ofNullable(this.cacheService.getAndRemove(key, Duration.ofSeconds(5))).orElse("null"), null, null);
     }
 
     @RequestMapping(value = "remain", method = RequestMethod.GET)
     @ApplyRuntimeData
     public Result remain(@RequestParam final String key) {
 
-        return new Result(String.valueOf(this.cacheService.remain(key)), 0, 0, this.asyncTest.testModel(), null, null);
+        return new Result(String.valueOf(this.cacheService.remaining(key)), 0, 0, this.asyncTest.testModel(), null,
+            null);
     }
 
     @RequestMapping(value = "remove", method = RequestMethod.GET)
