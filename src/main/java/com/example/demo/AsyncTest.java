@@ -7,7 +7,6 @@ import tbs.framework.async.task.annotations.AsyncWithCallback;
 import tbs.framework.base.constants.BeanNameConstant;
 import tbs.framework.cache.annotations.CacheLoading;
 import tbs.framework.cache.annotations.CacheUnloading;
-import tbs.framework.cache.impls.eliminate.ExpireCacheStrategy;
 import tbs.framework.lock.annotations.LockIt;
 import tbs.framework.lock.expections.ObtainLockFailException;
 import tbs.framework.log.ILogger;
@@ -32,8 +31,8 @@ public class AsyncTest {
 
     }
 
-    @CacheUnloading(key = "#args[0]", eliminationStrategy = ExpireCacheStrategy.class, intArgs = {10})
-    @CacheLoading(key = "#args[0]")
+    @CacheUnloading(key = "#method.#args[0]", intArgs = 20000)
+    @CacheLoading(key = "#method.#args[0]")
     public String testCache(int id) throws InterruptedException {
         Thread.currentThread().join(1000);
         return "hello world";
