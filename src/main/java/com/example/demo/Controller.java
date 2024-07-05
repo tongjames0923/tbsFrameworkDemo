@@ -14,6 +14,7 @@ import tbs.framework.base.interfaces.impls.chain.AbstractCollectiveChain;
 import tbs.framework.base.structs.ITree;
 import tbs.framework.base.structs.impls.SimpleMultibranchTree;
 import tbs.framework.base.structs.impls.TreeUtil;
+import tbs.framework.cache.AbstractTimeBaseCacheManager;
 import tbs.framework.cache.impls.managers.ImportedTimeBaseCacheManager;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
@@ -72,7 +73,7 @@ public class Controller {
     RuntimeData runtimeData;
 
     @Resource
-    ImportedTimeBaseCacheManager cacheService;
+    AbstractTimeBaseCacheManager cacheService;
 
     @RequestMapping(value = "put", method = RequestMethod.GET)
     @ApplyRuntimeData
