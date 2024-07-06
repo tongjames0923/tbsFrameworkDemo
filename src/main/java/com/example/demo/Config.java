@@ -10,16 +10,20 @@ import tbs.framework.auth.interfaces.IUserModelPicker;
 import tbs.framework.auth.interfaces.impls.CopyRuntimeDataExchanger;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
+import tbs.framework.base.utils.LogFactory;
+import tbs.framework.cache.impls.services.ConcurrentMapCacheServiceImpl;
+import tbs.framework.cache.managers.AbstractTimeBaseCacheManager;
 import tbs.framework.log.AbstractLogChainProvider;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.mq.consumer.IMessageConsumer;
 import tbs.framework.mq.message.IMessage;
+import tbs.framework.redis.impls.cache.services.Local2RedisCacheManager;
+import tbs.framework.redis.impls.cache.services.RedisCacheServiceImpl;
 import tbs.framework.sql.interfaces.ISqlLogger;
 import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
 import tbs.framework.timer.AbstractTimer;
 import tbs.framework.timer.impls.ScheduledExecutorTimer;
-import tbs.framework.base.utils.LogFactory;
 import tbs.framework.utils.impls.ChainLoggerFactory;
 import tbs.framework.xxl.interfaces.IJsonJobHandler;
 import tbs.framework.xxl.interfaces.IXXLJobsConfig;
@@ -248,5 +252,20 @@ public class Config {
                 return 1;
             }
         };
+    }
+
+    @Bean
+    ConcurrentMapCacheServiceImpl concurrentMapCacheService() {
+        return new ConcurrentMapCacheServiceImpl();
+    }
+
+    @Bean
+    RedisCacheServiceImpl redisCacheService() {
+        return new RedisCacheServiceImpl();
+    }
+
+    @Bean
+    AbstractTimeBaseCacheManager cacheManager() {
+        return new Local2RedisCacheManager();
     }
 }
