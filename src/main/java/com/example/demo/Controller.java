@@ -13,7 +13,7 @@ import tbs.framework.base.interfaces.impls.chain.AbstractCollectiveChain;
 import tbs.framework.base.structs.ITree;
 import tbs.framework.base.structs.impls.SimpleMultibranchTree;
 import tbs.framework.base.structs.impls.TreeUtil;
-import tbs.framework.cache.AbstractTimeBaseCacheManager;
+import tbs.framework.cache.managers.AbstractTimeBaseCacheManager;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.mq.center.AbstractMessageCenter;
