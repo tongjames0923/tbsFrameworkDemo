@@ -8,20 +8,17 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.web.bind.annotation.*;
 import tbs.framework.auth.annotations.ApplyRuntimeData;
 import tbs.framework.auth.model.RuntimeData;
-import tbs.framework.base.constants.BeanNameConstant;
 import tbs.framework.base.interfaces.impls.chain.AbstractChain;
 import tbs.framework.base.interfaces.impls.chain.AbstractCollectiveChain;
 import tbs.framework.base.structs.ITree;
 import tbs.framework.base.structs.impls.SimpleMultibranchTree;
 import tbs.framework.base.structs.impls.TreeUtil;
 import tbs.framework.cache.AbstractTimeBaseCacheManager;
-import tbs.framework.cache.impls.managers.ImportedTimeBaseCacheManager;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.mq.center.AbstractMessageCenter;
 import tbs.framework.mq.consumer.manager.IMessageConsumerManager;
 import tbs.framework.mq.message.impls.SimpleMessage;
-import tbs.framework.proxy.IProxy;
 import tbs.framework.proxy.impls.LockProxy;
 import tbs.framework.sql.model.Page;
 import tbs.framework.sql.utils.TransactionUtil;
@@ -46,9 +43,6 @@ public class Controller {
 
     @Resource
     LockProxy lockProxy;
-
-    @Resource(name = BeanNameConstant.ERROR_LOG_PROXY)
-    IProxy errorLogProxy;
 
     @Resource
     AsyncTest asyncTest;
