@@ -72,7 +72,7 @@ public class Controller {
     @RequestMapping(value = "put", method = RequestMethod.GET)
     @ApplyRuntimeData
     public Result put(@RequestParam final String key, @RequestParam final String value, @RequestParam final long exp) {
-        this.cacheService.put(key, value, false);
+        this.cacheService.put(key, value, true);
         if (0 < exp) {
             this.cacheService.expire(key, Duration.ofSeconds(exp));
         }
