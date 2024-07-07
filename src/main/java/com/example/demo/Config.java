@@ -18,7 +18,8 @@ import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.mq.consumer.IMessageConsumer;
 import tbs.framework.mq.message.IMessage;
-import tbs.framework.redis.impls.cache.services.Local2RedisCacheManager;
+import tbs.framework.redis.impls.cache.hooks.HybridCacheExponentiallyIncreasingPutHook;
+import tbs.framework.redis.impls.cache.managers.HybridCacheManager;
 import tbs.framework.redis.impls.cache.services.RedisCacheServiceImpl;
 import tbs.framework.sql.interfaces.ISqlLogger;
 import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
@@ -266,6 +267,7 @@ public class Config {
 
     @Bean
     AbstractTimeBaseCacheManager cacheManager() {
-        return new Local2RedisCacheManager();
+
+        return (AbstractTimeBaseCacheManager)new HybridCacheManager().addHook(new HybridCacheExponentiallyIncreasingPutHook());
     }
 }
