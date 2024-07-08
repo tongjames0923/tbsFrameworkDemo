@@ -34,7 +34,7 @@ tbs:
         receipt-broker: tbs.framework.cache.impls.CachedAsyncReceiptBroker
         receipt-timeout: 30
     cache:
-      cache-service-class: tbs.framework.redis.impls.cache.services.RedisCacheServiceImpl
+      cache-service-class: tbs.framework.redis.cache.impls.services.RedisCacheServiceImpl
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
