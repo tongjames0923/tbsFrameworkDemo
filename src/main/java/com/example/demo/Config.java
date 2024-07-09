@@ -11,14 +11,16 @@ import tbs.framework.auth.interfaces.impls.CopyRuntimeDataExchanger;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
 import tbs.framework.base.utils.LogFactory;
+import tbs.framework.cache.ICacheService;
 import tbs.framework.cache.impls.services.ConcurrentMapCacheServiceImpl;
-import tbs.framework.cache.managers.AbstractTimeBaseCacheManager;
+import tbs.framework.cache.managers.AbstractCacheManager;
+import tbs.framework.cache.managers.AbstractTimebaseHybridCacheManager;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.mq.consumer.IMessageConsumer;
 import tbs.framework.mq.message.IMessage;
-import tbs.framework.redis.impls.cache.managers.HybridCacheManager;
-import tbs.framework.redis.impls.cache.services.RedisCacheServiceImpl;
+import tbs.framework.redis.cache.impls.managers.HybridCacheManager;
+import tbs.framework.redis.cache.impls.services.RedisCacheServiceImpl;
 import tbs.framework.sql.interfaces.ISqlLogger;
 import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
 import tbs.framework.timer.AbstractTimer;
@@ -263,7 +265,12 @@ public class Config {
     }
 
     @Bean
-    AbstractTimeBaseCacheManager cacheManager() {
-        return (AbstractTimeBaseCacheManager)new HybridCacheManager();
+    AbstractCacheManager cacheManager(List<ICacheService> services) {
+
+        AbstractTimebaseHybridCacheManager cacheManager = new HybridCacheManager();
+        for (ICacheService s : services) {
+            cacheManager.addService(s);
+        }
+        return cacheManager;
     }
 }
