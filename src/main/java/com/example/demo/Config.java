@@ -15,8 +15,8 @@ import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
 import tbs.framework.base.utils.LogFactory;
 import tbs.framework.cache.ICacheService;
+import tbs.framework.cache.hooks.ICacheServiceHook;
 import tbs.framework.cache.impls.services.ConcurrentMapCacheServiceImpl;
-import tbs.framework.cache.managers.AbstractCacheManager;
 import tbs.framework.cache.managers.AbstractCacheManager;
 import tbs.framework.cache.managers.AbstractTimebaseHybridCacheManager;
 import tbs.framework.log.ILogger;
@@ -271,47 +271,45 @@ public class Config {
     @Bean
     AbstractCacheManager cacheManager(List<ICacheService> services) {
 
-        AbstractTimebaseHybridCacheManager cacheManager = new HybridCacheManager().setLevelRatio(64)
-            .addHook(new ICacheServiceHook() {
-
-                private Logger logger = LoggerFactory.getLogger(this.getClass());
-
-                @Override
-                public void onSetCache(@NotNull String key, Object value, boolean override,
-                    @NotNull AbstractCacheManager host) {
-                    synchronized (this)
-                    {
-                        logger.info("onSetCache cache key:{}, value:{},now has {}", key, value, host.size());
-                    }
-
-                }
-
-                @Override
-                public void onGetCache(@NotNull String key, @NotNull AbstractCacheManager cacheService) {
-
-                }
-
-                @Override
-                public void onRemoveCache(@NotNull String key, @NotNull AbstractCacheManager cacheService) {
-                    synchronized (this)
-                    {
-                        logger.info("onRemoveCache cache key:{}, now has {}", key, cacheService.size());
-                    }
-                }
-
-                @Override
-                public void onClearCache(@NotNull AbstractCacheManager cacheService) {
-
-                }
-
-                @Override
-                public void onTestCache(@NotNull String key, @NotNull AbstractCacheManager cacheService) {
-
-                }
-            });
+        AbstractTimebaseHybridCacheManager cacheManager = new HybridCacheManager().setLevelRatio(64);
         for (ICacheService s : services) {
             cacheManager.addService(s);
         }
+        cacheManager.addHook(new ICacheServiceHook() {
+
+            private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+            @Override
+            public void onSetCache(@NotNull String key, Object value, boolean override,
+                @NotNull AbstractCacheManager host) {
+                synchronized (this) {
+                    logger.info("onSetCache cache key:{}, value:{},now has {}", key, value, host.size());
+                }
+
+            }
+
+            @Override
+            public void onGetCache(@NotNull String key, @NotNull AbstractCacheManager cacheService) {
+
+            }
+
+            @Override
+            public void onRemoveCache(@NotNull String key, @NotNull AbstractCacheManager cacheService) {
+                synchronized (this) {
+                    logger.info("onRemoveCache cache key:{}, now has {}", key, cacheService.size());
+                }
+            }
+
+            @Override
+            public void onClearCache(@NotNull AbstractCacheManager cacheService) {
+
+            }
+
+            @Override
+            public void onTestCache(@NotNull String key, @NotNull AbstractCacheManager cacheService) {
+
+            }
+        });
         return cacheManager;
     }
 }
