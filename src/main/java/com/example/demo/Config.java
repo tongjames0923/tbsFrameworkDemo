@@ -14,10 +14,11 @@ import tbs.framework.auth.interfaces.impls.CopyRuntimeDataExchanger;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
 import tbs.framework.base.utils.LogFactory;
-import tbs.framework.cache.hooks.ICacheServiceHook;
+import tbs.framework.cache.ICacheService;
 import tbs.framework.cache.impls.services.ConcurrentMapCacheServiceImpl;
 import tbs.framework.cache.managers.AbstractCacheManager;
-import tbs.framework.cache.managers.AbstractTimeBaseCacheManager;
+import tbs.framework.cache.managers.AbstractCacheManager;
+import tbs.framework.cache.managers.AbstractTimebaseHybridCacheManager;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.mq.consumer.IMessageConsumer;
@@ -268,8 +269,9 @@ public class Config {
     }
 
     @Bean
-    AbstractTimeBaseCacheManager cacheManager() {
-        return (AbstractTimeBaseCacheManager)new HybridCacheManager().setLevelRatio(64)
+    AbstractCacheManager cacheManager(List<ICacheService> services) {
+
+        AbstractTimebaseHybridCacheManager cacheManager = new HybridCacheManager().setLevelRatio(64)
             .addHook(new ICacheServiceHook() {
 
                 private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -307,5 +309,9 @@ public class Config {
 
                 }
             });
+        for (ICacheService s : services) {
+            cacheManager.addService(s);
+        }
+        return cacheManager;
     }
 }
