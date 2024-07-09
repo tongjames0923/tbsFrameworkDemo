@@ -18,7 +18,7 @@ import tbs.framework.cache.ICacheService;
 import tbs.framework.cache.hooks.ICacheServiceHook;
 import tbs.framework.cache.impls.services.ConcurrentMapCacheServiceImpl;
 import tbs.framework.cache.managers.AbstractCacheManager;
-import tbs.framework.cache.managers.AbstractTimebaseHybridCacheManager;
+import tbs.framework.cache.managers.AbstractExpiredHybridCacheManager;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.mq.consumer.IMessageConsumer;
@@ -271,7 +271,7 @@ public class Config {
     @Bean
     AbstractCacheManager cacheManager(List<ICacheService> services) {
 
-        AbstractTimebaseHybridCacheManager cacheManager = new HybridCacheManager().setLevelRatio(64);
+        AbstractExpiredHybridCacheManager cacheManager = new HybridCacheManager().setLevelRatio(64);
         for (ICacheService s : services) {
             cacheManager.addService(s);
         }
