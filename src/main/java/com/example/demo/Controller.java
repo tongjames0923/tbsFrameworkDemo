@@ -244,6 +244,9 @@ public class Controller {
         for (int i = 0; i < t; i++) {
             threadUtil.runCollectionInBackground(() -> {
                 for (int j = 0; j < n / t; j++) {
+                    synchronized (this) {
+                        autoLogger.warn("pub {} at {}", l.get(), Thread.currentThread().getName());
+                    }
                     messageCenter.publish(new SimpleMessage(topic, tag, null, random.nextInt(range)));
                     l.incrementAndGet();
                 }
