@@ -50,7 +50,6 @@ public class Config {
     //        return new LogDbChainProvider();
     //    }
 
-
     @Bean
     IMessageConsumer consumer1() {
         return new IMessageConsumer() {
@@ -66,46 +65,49 @@ public class Config {
 
             @Override
             public Set<String> avaliableTopics() {
-                return new HashSet<>(Arrays.asList(".*"));
+                return new HashSet<>(Arrays.asList(".*", "#"));
             }
 
             @Override
             public void consume(IMessage message) {
-                if (logger == null) {
-                    logger = LogFactory.getInstance().getLogger(this.getClass().getName() + ":" + this.consumerId());
+                synchronized (this) {
+                    if (logger == null) {
+                        logger =
+                            LogFactory.getInstance().getLogger(this.getClass().getName() + ":" + this.consumerId());
+                    }
+                    logger.info("{} content:{} , count={}", message.getMessageId(), message.getTag(),
+                        cnt.incrementAndGet());
                 }
-                logger.info("{} content:{} , count={}", message.getMessageId(), message.getTag(),cnt.incrementAndGet());
-
             }
         };
     }
-//
-//    @Bean
-//    IMessageConsumer consumer2() {
-//        return new IMessageConsumer() {
-//            @AutoLogger
-//            ILogger logger = null;
-//
-//            @Override
-//            public String consumerId() {
-//                return "优先级测试";
-//            }
-//
-//            @Override
-//            public Set<String> avaliableTopics() {
-//                return new HashSet<>(Arrays.asList("优先级.*"));
-//            }
-//
-//            @Override
-//            public void consume(IMessage message) {
-//                if (logger == null) {
-//                    logger = LogFactory.getInstance().getLogger(this.getClass().getName() + ":" + this.consumerId());
-//                }
-//                logger.info("{} 优先级:{}", message.getMessageId(), message.getPriority());
-//
-//            }
-//        };
-//    }
+    //
+    //    @Bean
+    //    IMessageConsumer consumer2() {
+    //        return new IMessageConsumer() {
+    //            @AutoLogger
+    //            ILogger logger = null;
+    //
+    //            @Override
+    //            public String consumerId() {
+    //                return "优先级测试";
+    //            }
+    //
+    //            @Override
+    //            public Set<String> avaliableTopics() {
+    //                return new HashSet<>(Arrays.asList("优先级.*"));
+    //            }
+    //
+    //            @Override
+    //            public void consume(IMessage message) {
+    //                if (logger == null) {
+    //                    logger = LogFactory.getInstance().getLogger(this.getClass().getName() + ":" + this.consumerId());
+    //                }
+    //                logger.info("{} 优先级:{}", message.getMessageId(), message.getPriority());
+    //
+    //            }
+    //        };
+    //    }
 
     @Bean
     AbstractTimer timer() {

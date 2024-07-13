@@ -20,6 +20,11 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>tbs.framework</groupId>
+            <artifactId>rabbitmq</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 <!--    <dependencyManagement>-->
 <!--        <dependencies>-->
