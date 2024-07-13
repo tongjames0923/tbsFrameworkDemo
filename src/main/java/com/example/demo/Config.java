@@ -21,8 +21,6 @@ import tbs.framework.cache.managers.AbstractExpireManager;
 import tbs.framework.cache.managers.AbstractExpiredHybridCacheManager;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
-import tbs.framework.mq.center.AbstractMessageCenter;
-import tbs.framework.mq.center.impls.MessageQueueCenter;
 import tbs.framework.mq.consumer.IMessageConsumer;
 import tbs.framework.mq.message.IMessage;
 import tbs.framework.redis.cache.impls.managers.HybridCacheManager;
@@ -52,10 +50,6 @@ public class Config {
     //        return new LogDbChainProvider();
     //    }
 
-    @Bean
-    AbstractMessageCenter center() {
-        return new MessageQueueCenter();
-    }
 
     @Bean
     IMessageConsumer consumer1() {
