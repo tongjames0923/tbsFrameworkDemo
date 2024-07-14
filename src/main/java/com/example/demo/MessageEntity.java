@@ -31,4 +31,20 @@ public class MessageEntity implements Serializable {
     @Column(name = "tag")
     private String tag;
 
+    @Override
+    public String toString() {
+        return "MessageEntity{" +
+            "id=" +
+            id +
+            ", workId='" +
+            workId +
+            '\'' +
+            ", messageId='" +
+            messageId +
+            '\'' +
+            ", tag='" +
+            tag +
+            '\'' +
+            '}';
+    }
 }

@@ -28,6 +28,7 @@ tbs:
       event-impl: tbs.framework.mq.event.impls.LogMqEvent
       rabbit:
         rebuild-exchange-and-queue: true
+        passive-reception: true
     redis:
       mq:
         message-serializer-class: org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
@@ -67,4 +68,4 @@ mybatis:
 logging:
   level:
     tbs.framework: debug
-    com.example.demo: info
+    com.example.demo: debug
