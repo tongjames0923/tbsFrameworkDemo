@@ -152,6 +152,47 @@ public class Controller {
             null)).collectFromChain();
     }
 
+    int cnt = 0;
+
+    @RequestMapping(value = "testWriteReadLock", method = RequestMethod.GET)
+    public void testWriteReadLock() throws InterruptedException {
+        cnt++;
+        for (int i = 0; i < 1; i++) {
+            ThreadUtil.getInstance().runCollectionInBackground(() -> {
+                for (int j = 0; j < 100; j++) {
+                    try {
+                        asyncTest.testWrite();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        }
+
+        for (int i = 0; i < 1; i++) {
+            ThreadUtil.getInstance().runCollectionInBackground(() -> {
+                int oldv = -1;
+                while (true) {
+                    try {
+                        int v = asyncTest.testRead();
+//                        if (v != oldv) {
+                            synchronized (this) {
+                                oldv = v;
+                                autoLogger.warn("Read!:{}", v);
+//                            }
+                        }
+
+                        if (v >= cnt * 100) {
+                            break;
+                        }
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        }
+    }
+
     @RequestMapping(value = "testCache", method = RequestMethod.GET)
     public String cacheTest(int id) throws Exception {
         String r = asyncTest.testCache(id);

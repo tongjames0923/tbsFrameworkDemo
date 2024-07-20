@@ -1,8 +1,6 @@
 package com.example.demo;
 
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
@@ -14,11 +12,11 @@ import tbs.framework.auth.interfaces.impls.CopyRuntimeDataExchanger;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
 import tbs.framework.base.utils.LogFactory;
-import tbs.framework.cache.hooks.ICacheServiceHook;
 import tbs.framework.cache.impls.services.ConcurrentMapCacheServiceImpl;
-import tbs.framework.cache.managers.AbstractCacheManager;
 import tbs.framework.cache.managers.AbstractExpireManager;
 import tbs.framework.cache.managers.AbstractExpiredHybridCacheManager;
+import tbs.framework.lock.IReadWriteLock;
+import tbs.framework.lock.impls.ReadWriteLockAdapter;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.mq.consumer.IMessageConsumer;
@@ -270,43 +268,13 @@ public class Config {
     }
 
     @Bean
-    AbstractExpireManager cacheManager(ConcurrentMapCacheServiceImpl local, RedisCacheServiceImpl redisCacheService) {
+    AbstractExpireManager cacheManager(ConcurrentMapCacheServiceImpl cacheService,
+        RedisCacheServiceImpl redisCacheService) {
+        return new HybridCacheManager(cacheService, redisCacheService);
+    }
 
-        AbstractExpiredHybridCacheManager cacheManager =
-            new HybridCacheManager(local, redisCacheService).setLevelRatio(64);
-        cacheManager.addHook(new ICacheServiceHook() {
-
-            private Logger logger = LoggerFactory.getLogger(this.getClass());
-
-            @Override
-            public void onSetCache(@NotNull String key, Object value, boolean override,
-                @NotNull AbstractCacheManager host) {
-                //                logger.info("onSetCache cache key:{}, value:{},now has {}", key, value, host.size());
-
-            }
-
-            @Override
-            public void onGetCache(@NotNull String key, @NotNull AbstractCacheManager cacheService) {
-
-            }
-
-            @Override
-            public void onRemoveCache(@NotNull String key, @NotNull AbstractCacheManager cacheService) {
-                synchronized (this) {
-                    logger.info("onRemoveCache cache key:{}, now has {}", key, cacheService.size());
-                }
-            }
-
-            @Override
-            public void onClearCache(@NotNull AbstractCacheManager cacheService) {
-
-            }
-
-            @Override
-            public void onTestCache(@NotNull String key, @NotNull AbstractCacheManager cacheService) {
-
-            }
-        });
-        return cacheManager;
+    @Bean(AbstractExpiredHybridCacheManager.GLOBAL_LOCK)
+    IReadWriteLock readWriteLock(RedissonClient redissonClient) {
+        return new ReadWriteLockAdapter(redissonClient.getReadWriteLock("simpleReadWriteLock"));
     }
 }

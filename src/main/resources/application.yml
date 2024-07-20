@@ -25,13 +25,15 @@ tbs:
     mq:
       consumer-manager: tbs.framework.mq.consumer.manager.impls.PatternConsumerManager
       auto-start-center: true
-      event-impl: tbs.framework.mq.event.impls.LogMqEvent
       rabbit:
         rebuild-exchange-and-queue: true
         passive-reception: true
+      task-block-alive-time: 1m
+      task-block-clean-interval: 10s
     redis:
       mq:
         message-serializer-class: org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
+
     async:
       task:
         receipt-broker: tbs.framework.cache.impls.CachedAsyncReceiptBroker
