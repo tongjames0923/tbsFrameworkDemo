@@ -2,18 +2,16 @@ package com.example.demo;
 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import tbs.framework.async.task.annotations.AsyncTaskId;
-import tbs.framework.async.task.annotations.AsyncWithCallback;
 import tbs.framework.base.constants.BeanNameConstant;
 import tbs.framework.cache.annotations.CacheLoading;
 import tbs.framework.cache.annotations.CacheUnloading;
 import tbs.framework.lock.IReadWriteLock;
-import tbs.framework.lock.annotations.LockIt;
 import tbs.framework.lock.expections.ObtainLockFailException;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.multilingual.annotations.Translated;
 import tbs.framework.proxy.impls.LockProxy;
+import tbs.framework.utils.ThreadUtil;
 
 import javax.annotation.Resource;
 import java.time.Duration;
@@ -92,16 +90,20 @@ public class AsyncTest {
         });
     }
 
-    @AsyncWithCallback
-    @LockIt(lockId = "h")
-    public String test1(@AsyncTaskId String id) throws ObtainLockFailException {
-        try {
-            Thread.currentThread().join(5000);
-        } catch (final InterruptedException e) {
-            throw new RuntimeException(e);
+    public String test1(String id) throws ObtainLockFailException {
+        Integer[] v = new Integer[] {0};
+        for (int i = 0; i < 5; i++) {
+            ThreadUtil.getInstance().runCollectionInBackground(() -> {
+                for (int j = 0; j < 200; j++) {
+                    LockProxy.getInstance().quickLock(() -> {
+                        logger.info("value :{}", v[0]++);
+                    }, ThreadUtil.getInstance().getLock(id));
+                }
+            });
         }
-        this.logger.info("Hello World!");
-        return "Hello World!~~~~";
+
+        return null;
+
     }
 
     @Translated

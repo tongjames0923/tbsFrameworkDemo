@@ -12,6 +12,7 @@ import tbs.framework.redis.annotations.EnableRedisMessageCenter;
 import tbs.framework.redis.annotations.EnableTbsRedis;
 import tbs.framework.sql.annotations.EnableTbsSqlUtils;
 import tbs.framework.swagger.annotations.EnableTbsSwagger;
+import tbs.framework.zookeeper.annotations.EnableZooKeeper;
 
 @EnableTbsRedis
 @EnableTbsAuth
@@ -22,6 +23,7 @@ import tbs.framework.swagger.annotations.EnableTbsSwagger;
 @EnableTbsSwagger
 @EnableTbsSqlUtils
 @EnableRedisMessageCenter
+@EnableZooKeeper
 public class DemoApplication {
 
     public static void main(final String[] args) {

@@ -4,7 +4,7 @@ tbs:
       lock:
         proxy-lock-time-unit: minutes
         proxy-lock-timeout: 1
-        lock-provider: tbs.framework.lock.impls.providers.JdkLockProvider
+        lock-provider: tbs.framework.zookeeper.locks.ZooKeeperLockProvider
       uuid-provider: tbs.framework.utils.impls.SnowFlakeUUID
       logger-provider: tbs.framework.utils.impls.Slf4JLoggerFactory
     locale:
@@ -40,6 +40,8 @@ tbs:
         receipt-timeout: 30
     cache:
       cache-service-class: tbs.framework.redis.cache.impls.services.RedisCacheServiceImpl
+    zookeeper:
+      registry-address: 127.0.0.1:2181
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -69,5 +71,5 @@ mybatis:
     map-underscore-to-camel-case: true
 logging:
   level:
-    tbs.framework: debug
+    tbs.framework: trace
     com.example.demo: debug

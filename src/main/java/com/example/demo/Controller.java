@@ -3,6 +3,7 @@ package com.example.demo;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import lombok.Data;
+import org.apache.curator.framework.CuratorFramework;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.web.bind.annotation.*;
@@ -175,11 +176,11 @@ public class Controller {
                 while (true) {
                     try {
                         int v = asyncTest.testRead();
-//                        if (v != oldv) {
-                            synchronized (this) {
-                                oldv = v;
-                                autoLogger.warn("Read!:{}", v);
-//                            }
+                        //                        if (v != oldv) {
+                        synchronized (this) {
+                            oldv = v;
+                            autoLogger.warn("Read!:{}", v);
+                            //                            }
                         }
 
                         if (v >= cnt * 100) {
@@ -360,4 +361,34 @@ public class Controller {
         });
         return JSON.toJSONString(root);
     }
+
+    @Resource
+    CuratorFramework zooKeeper;
+
+    @RequestMapping(value = "zoo", method = RequestMethod.GET)
+    public String zoo(String path, int t, String text) throws Exception {
+        Object ob = null;
+        switch (t) {
+
+            case 1:
+                ob = zooKeeper.checkExists().forPath(path);
+                break;
+            case 2:
+                ob = new String(zooKeeper.getData().forPath(path));
+                break;
+            case 3:
+                ob = zooKeeper.setData().forPath(path, text.getBytes());
+                break;
+            case 4:
+                ob = zooKeeper.create().forPath(path, text.getBytes());
+                break;
+
+            default:
+                ob = "null";
+                break;
+        }
+        return JSON.toJSONString(ob);
+
+    }
+
 }
