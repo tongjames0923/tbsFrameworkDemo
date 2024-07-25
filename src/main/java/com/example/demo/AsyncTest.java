@@ -11,6 +11,7 @@ import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.multilingual.annotations.Translated;
 import tbs.framework.proxy.impls.LockProxy;
+import tbs.framework.utils.LockUtils;
 import tbs.framework.utils.ThreadUtil;
 
 import javax.annotation.Resource;
@@ -97,7 +98,7 @@ public class AsyncTest {
                 for (int j = 0; j < 200; j++) {
                     LockProxy.getInstance().quickLock(() -> {
                         logger.info("value :{}", v[0]++);
-                    }, ThreadUtil.getInstance().getLock(id));
+                    }, LockUtils.getInstance().getLock(id));
                 }
             });
         }
