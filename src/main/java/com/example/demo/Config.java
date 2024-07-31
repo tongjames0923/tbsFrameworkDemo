@@ -23,8 +23,10 @@ import tbs.framework.mq.consumer.IMessageConsumer;
 import tbs.framework.mq.message.IMessage;
 import tbs.framework.redis.cache.impls.managers.HybridCacheManager;
 import tbs.framework.redis.cache.impls.services.RedisCacheServiceImpl;
+import tbs.framework.sql.interfaces.IAutoValueProvider;
 import tbs.framework.sql.interfaces.ISqlLogger;
 import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
+import tbs.framework.sql.interfaces.impls.provider.DateValueAutoProvider;
 import tbs.framework.timer.AbstractTimer;
 import tbs.framework.timer.impls.ScheduledExecutorTimer;
 import tbs.framework.xxl.interfaces.IJsonJobHandler;
@@ -47,6 +49,11 @@ public class Config {
     //    AbstractLogChainProvider logChain() {
     //        return new LogDbChainProvider();
     //    }
+
+    @Bean
+    IAutoValueProvider autoValueProvider() {
+        return new DateValueAutoProvider();
+    }
 
     @Bean
     IMessageConsumer consumer1() {

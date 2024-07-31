@@ -391,4 +391,13 @@ public class Controller {
 
     }
 
+    @GetMapping("testSql")
+    public String insertLoigninfo() {
+//        loginInfoMapper.testInsert(3, "f", "6", new LoginInfo());
+
+                loginInfoMapper.insert(
+                    new LoginInfo(256L, 10L, Integer.valueOf(1).byteValue(), null, Integer.valueOf(0).byteValue(), 10L, ""));
+        return "ok";
+    }
+
 }

@@ -3,17 +3,18 @@ package com.example.demo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import tbs.framework.auth.annotations.EnableTbsAuth;
-import tbs.framework.base.annotations.EnableMessageQueue;
 import tbs.framework.base.annotations.EnableMultilingual;
 import tbs.framework.base.annotations.EnableTbsAsync;
 import tbs.framework.base.annotations.EnableTbsCache;
 import tbs.framework.rabbitmq.EnableRabbitMqQueue;
-import tbs.framework.redis.annotations.EnableRedisMessageCenter;
 import tbs.framework.redis.annotations.EnableTbsRedis;
 import tbs.framework.sql.annotations.EnableTbsSqlUtils;
 import tbs.framework.swagger.annotations.EnableTbsSwagger;
 import tbs.framework.zookeeper.annotations.EnableZooKeeper;
 
+/**
+ * @author abstergo
+ */
 @EnableTbsRedis
 @EnableTbsAuth
 @SpringBootApplication
@@ -22,7 +23,7 @@ import tbs.framework.zookeeper.annotations.EnableZooKeeper;
 @EnableTbsCache
 @EnableTbsSwagger
 @EnableTbsSqlUtils
-@EnableRedisMessageCenter
+@EnableRabbitMqQueue
 @EnableZooKeeper
 public class DemoApplication {
 

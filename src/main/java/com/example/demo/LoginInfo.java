@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import tbs.framework.sql.annotations.AutoSetDate;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
@@ -23,20 +23,17 @@ public class LoginInfo {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotNull
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @NotNull
     @Column(name = "login_flag", nullable = false)
     private Byte loginFlag;
 
-    @NotNull
     @Column(name = "login_time", nullable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @AutoSetDate
     private Date loginTime;
 
-    @NotNull
     @Column(name = "delete_mark", nullable = false)
     private Byte deleteMark;
 
