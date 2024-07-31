@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import cn.hutool.core.util.StrUtil;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,9 @@ public class ZooEvent implements IZookeeperListenner {
 
     @Override
     public boolean accept(String path, Watcher.Event.KeeperState state, Watcher.Event.EventType type) {
+        if (StrUtil.isEmpty(path)) {
+            return false;
+        }
         return path.startsWith("/ZK_NODE/locks") && type == Watcher.Event.EventType.NodeDeleted;
     }
 
