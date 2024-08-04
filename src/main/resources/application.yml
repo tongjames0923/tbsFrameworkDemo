@@ -4,7 +4,7 @@ tbs:
       lock:
         proxy-lock-time-unit: minutes
         proxy-lock-timeout: 1
-        lock-provider: tbs.framework.zookeeper.locks.ZooKeeperLockProvider
+        lock-provider: tbs.framework.lock.impls.providers.JdkLockProvider
       uuid-provider: tbs.framework.utils.impls.SnowFlakeUUID
       logger-provider: tbs.framework.utils.impls.Slf4JLoggerFactory
     locale:

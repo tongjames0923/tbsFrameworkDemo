@@ -1,5 +1,6 @@
 package com.example.demo
 
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import tbs.framework.auth.annotations.PermissionValidated
@@ -11,9 +12,8 @@ import tbs.framework.auth.annotations.PermissionValidated
 @RequestMapping("/api")
 class ApiController {
     @DbPermission
-    @PermissionValidated("70")
-    @PermissionValidated("66")
-    @RequestMapping("a")
+    @PermissionValidated("70", "66")
+    @GetMapping("a")
     fun a(): String {
         return "Hello World a"
     }

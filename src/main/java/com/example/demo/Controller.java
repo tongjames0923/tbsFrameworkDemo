@@ -3,9 +3,7 @@ package com.example.demo;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import lombok.Data;
-import org.apache.curator.framework.CuratorFramework;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.web.bind.annotation.*;
 import tbs.framework.auth.annotations.ApplyRuntimeData;
 import tbs.framework.auth.model.RuntimeData;
@@ -22,7 +20,6 @@ import tbs.framework.mq.consumer.manager.IMessageConsumerManager;
 import tbs.framework.mq.message.impls.SimpleMessage;
 import tbs.framework.proxy.impls.LockProxy;
 import tbs.framework.sql.model.Page;
-import tbs.framework.sql.utils.TransactionUtil;
 import tbs.framework.timer.AbstractTimer;
 import tbs.framework.utils.ChainUtil;
 import tbs.framework.utils.MultilingualUtil;
@@ -87,40 +84,30 @@ public class Controller {
             Optional.ofNullable(this.cacheService.getAndRemove(key, Duration.ofSeconds(5))).orElse("null"), null, null);
     }
 
-    @RequestMapping(value = "remain", method = RequestMethod.GET)
-    @ApplyRuntimeData
-    public Result remain(@RequestParam final String key) {
-
-        return new Result(String.valueOf(this.cacheService.remaining(key)), 0, 0, this.asyncTest.testModel(), null,
-            null);
-    }
-
-    @RequestMapping(value = "remove", method = RequestMethod.GET)
-    @ApplyRuntimeData
-    public Result remove(@RequestParam final String key) {
-        this.cacheService.remove(key);
-        return new Result("", 0, 0, this.asyncTest.testModel(), null, null);
-    }
+    //    @RequestMapping(value = "remain", method = RequestMethod.GET)
+    //    @ApplyRuntimeData
+    //    public Result remain(@RequestParam final String key) {
+    //
+    //        return new Result(String.valueOf(this.cacheService.remaining(key)), 0, 0, this.asyncTest.testModel(), null,
+    //            null);
+    //    }
+    //
+    //    @RequestMapping(value = "remove", method = RequestMethod.GET)
+    //    @ApplyRuntimeData
+    //    public Result remove(@RequestParam final String key) {
+    //        this.cacheService.remove(key);
+    //        return new Result("", 0, 0, this.asyncTest.testModel(), null, null);
+    //    }
 
     @Resource
     LoginInfoMapper loginInfoMapper;
 
     @RequestMapping("testTransication")
-    public String testTransication() {
-        LoginInfo[] loginInfos =
-            {new LoginInfo(null, 1L, Integer.valueOf(1).byteValue(), new Date(), Integer.valueOf(1).byteValue(), 1L,
-                null),
-                new LoginInfo(null, 2L, Integer.valueOf(1).byteValue(), new Date(), Integer.valueOf(1).byteValue(), 1L,
-                    null),
-                new LoginInfo(null, 3L, Integer.valueOf(1).byteValue(), new Date(), Integer.valueOf(1).byteValue(), 1L,
-                    null)};
-        TransactionUtil.getInstance().executeTransaction(Propagation.REQUIRED.value(),
-            () -> loginInfoMapper.insertList(Arrays.asList(loginInfos)));
-        return JSON.toJSONString(loginInfos);
+    public TestModel testTransication(String text) {
+        return asyncTest.testModel(text);
     }
 
     static class RangeChain extends AbstractCollectiveChain<Void, Integer> {
-
         int i, mx;
 
         public RangeChain(int i, int max) {
@@ -362,34 +349,34 @@ public class Controller {
         return JSON.toJSONString(root);
     }
 
-    @Resource
-    CuratorFramework zooKeeper;
+//    @Resource
+//    CuratorFramework zooKeeper;
 
-    @RequestMapping(value = "zoo", method = RequestMethod.GET)
-    public String zoo(String path, int t, String text) throws Exception {
-        Object ob = null;
-        switch (t) {
-
-            case 1:
-                ob = zooKeeper.checkExists().forPath(path);
-                break;
-            case 2:
-                ob = new String(zooKeeper.getData().forPath(path));
-                break;
-            case 3:
-                ob = zooKeeper.setData().forPath(path, text.getBytes());
-                break;
-            case 4:
-                ob = zooKeeper.create().forPath(path, text.getBytes());
-                break;
-
-            default:
-                ob = "null";
-                break;
-        }
-        return JSON.toJSONString(ob);
-
-    }
+//    @RequestMapping(value = "zoo", method = RequestMethod.GET)
+//    public String zoo(String path, int t, String text) throws Exception {
+//        Object ob = null;
+//        switch (t) {
+//
+//            case 1:
+//                ob = zooKeeper.checkExists().forPath(path);
+//                break;
+//            case 2:
+//                ob = new String(zooKeeper.getData().forPath(path));
+//                break;
+//            case 3:
+//                ob = zooKeeper.setData().forPath(path, text.getBytes());
+//                break;
+//            case 4:
+//                ob = zooKeeper.create().forPath(path, text.getBytes());
+//                break;
+//
+//            default:
+//                ob = "null";
+//                break;
+//        }
+//        return JSON.toJSONString(ob);
+//
+//    }
 
     @GetMapping("testSql")
     public String insertLoigninfo() {

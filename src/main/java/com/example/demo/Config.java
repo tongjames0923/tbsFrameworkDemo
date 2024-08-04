@@ -12,7 +12,9 @@ import tbs.framework.auth.interfaces.impls.CopyRuntimeDataExchanger;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
 import tbs.framework.base.utils.LogFactory;
-import tbs.framework.cache.impls.services.ConcurrentMapCacheServiceImpl;
+import tbs.framework.cache.annotations.CacheLoading;
+import tbs.framework.cache.annotations.CacheUnloading;
+import tbs.framework.cache.impls.managers.ImportedExpireManager;
 import tbs.framework.cache.managers.AbstractExpireManager;
 import tbs.framework.cache.managers.AbstractExpiredHybridCacheManager;
 import tbs.framework.lock.IReadWriteLock;
@@ -21,7 +23,7 @@ import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.mq.consumer.IMessageConsumer;
 import tbs.framework.mq.message.IMessage;
-import tbs.framework.redis.cache.impls.managers.HybridCacheManager;
+import tbs.framework.redis.cache.impls.RedisExpiredImpl;
 import tbs.framework.redis.cache.impls.services.RedisCacheServiceImpl;
 import tbs.framework.sql.interfaces.IAutoValueProvider;
 import tbs.framework.sql.interfaces.ISqlLogger;
@@ -161,6 +163,9 @@ public class Config {
     @Bean
     IUserModelPicker userModelPicker(final UserRightMapper userRightMapper, final SysUserMapper sysUserMapper) {
         return new IUserModelPicker() {
+
+            @CacheLoading(key = "#args[0]")
+            @CacheUnloading(key = "#args[0]", intArgs = {10000})
             @Override
             public UserModel getUserModel(final String token) {
                 final SysUser user = sysUserMapper.selectByPrimaryKey(token);
@@ -264,10 +269,10 @@ public class Config {
         };
     }
 
-    @Bean
-    ConcurrentMapCacheServiceImpl concurrentMapCacheService() {
-        return new ConcurrentMapCacheServiceImpl();
-    }
+    //    @Bean
+    //    ConcurrentMapCacheServiceImpl concurrentMapCacheService() {
+    //        return new ConcurrentMapCacheServiceImpl();
+    //    }
 
     @Bean
     RedisCacheServiceImpl redisCacheService() {
@@ -275,9 +280,8 @@ public class Config {
     }
 
     @Bean
-    AbstractExpireManager cacheManager(ConcurrentMapCacheServiceImpl cacheService,
-        RedisCacheServiceImpl redisCacheService) {
-        return new HybridCacheManager(cacheService, redisCacheService);
+    AbstractExpireManager cacheManager(RedisCacheServiceImpl service) {
+        return new ImportedExpireManager(service, new RedisExpiredImpl());
     }
 
     @Bean(AbstractExpiredHybridCacheManager.GLOBAL_LOCK)

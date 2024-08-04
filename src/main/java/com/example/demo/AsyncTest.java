@@ -108,7 +108,7 @@ public class AsyncTest {
     }
 
     @Translated
-    public TestModel testModel() {
-        return new TestModel();
+    public TestModel testModel(String text) {
+        return new TestModel(text);
     }
 }
