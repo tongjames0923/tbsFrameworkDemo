@@ -102,6 +102,8 @@ public class Controller {
     @Resource
     LoginInfoMapper loginInfoMapper;
 
+
+
     @RequestMapping("testTransication")
     public TestModel testTransication(String text) {
         return asyncTest.testModel(text);

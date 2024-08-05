@@ -11,13 +11,14 @@ tbs:
       type: header
       value: X-LANG
     auth:
-      token-picker: tbs.framework.auth.interfaces.impls.tokenPickers.HeaderRequestTokenPicker
+      token-picker: tbs.framework.auth.interfaces.token.impls.pickers.HeaderRequestTokenPicker
       enable-cors: true
       enable-annotation-permission-validator: true
       auth-path-pattern:
         [
           "/api/**"
         ]
+      api-cold-down-time: 200
     swagger:
       base-package: com.example.demo
     sql:

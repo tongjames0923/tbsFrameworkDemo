@@ -5,12 +5,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import tbs.framework.auth.interfaces.IErrorHandler;
-import tbs.framework.auth.interfaces.IPermissionProvider;
 import tbs.framework.auth.interfaces.IRuntimeDataExchanger;
-import tbs.framework.auth.interfaces.IUserModelPicker;
+import tbs.framework.auth.interfaces.debounce.IDebounce;
+import tbs.framework.auth.interfaces.debounce.impls.CacheDebounce;
 import tbs.framework.auth.interfaces.impls.CopyRuntimeDataExchanger;
+import tbs.framework.auth.interfaces.permission.IPermissionProvider;
+import tbs.framework.auth.interfaces.token.IUserModelPicker;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
+import tbs.framework.auth.properties.AuthProperty;
 import tbs.framework.base.utils.LogFactory;
 import tbs.framework.cache.annotations.CacheLoading;
 import tbs.framework.cache.annotations.CacheUnloading;
@@ -287,5 +290,10 @@ public class Config {
     @Bean(AbstractExpiredHybridCacheManager.GLOBAL_LOCK)
     IReadWriteLock readWriteLock(RedissonClient redissonClient) {
         return new ReadWriteLockAdapter(redissonClient.getReadWriteLock("simpleReadWriteLock"));
+    }
+
+    @Bean
+    IDebounce debounce(AbstractExpireManager expireManager, AuthProperty authProperty) {
+        return new CacheDebounce(expireManager, authProperty.getApiColdDownTime());
     }
 }

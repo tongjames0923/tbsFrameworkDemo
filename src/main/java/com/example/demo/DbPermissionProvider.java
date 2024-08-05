@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import tbs.framework.auth.interfaces.IPermissionProvider;
+import tbs.framework.auth.interfaces.permission.IPermissionProvider;
 import tbs.framework.auth.model.PermissionModel;
 import tbs.framework.auth.model.UserModel;
 
