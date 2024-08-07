@@ -1,33 +1,22 @@
 package com.example.demo;
 
-import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import tbs.framework.auth.interfaces.IErrorHandler;
 import tbs.framework.auth.interfaces.IRuntimeDataExchanger;
-import tbs.framework.auth.interfaces.debounce.IDebounce;
-import tbs.framework.auth.interfaces.debounce.impls.CacheDebounce;
 import tbs.framework.auth.interfaces.impls.CopyRuntimeDataExchanger;
 import tbs.framework.auth.interfaces.permission.IPermissionProvider;
 import tbs.framework.auth.interfaces.token.IUserModelPicker;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
-import tbs.framework.auth.properties.AuthProperty;
 import tbs.framework.base.utils.LogFactory;
 import tbs.framework.cache.annotations.CacheLoading;
 import tbs.framework.cache.annotations.CacheUnloading;
-import tbs.framework.cache.impls.managers.ImportedExpireManager;
-import tbs.framework.cache.managers.AbstractExpireManager;
-import tbs.framework.cache.managers.AbstractExpiredHybridCacheManager;
-import tbs.framework.lock.IReadWriteLock;
-import tbs.framework.lock.impls.ReadWriteLockAdapter;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.mq.consumer.IMessageConsumer;
 import tbs.framework.mq.message.IMessage;
-import tbs.framework.redis.cache.impls.RedisExpiredImpl;
-import tbs.framework.redis.cache.impls.services.RedisCacheServiceImpl;
 import tbs.framework.sql.interfaces.IAutoValueProvider;
 import tbs.framework.sql.interfaces.ISqlLogger;
 import tbs.framework.sql.interfaces.impls.SimpleJsonLogger;
@@ -277,23 +266,23 @@ public class Config {
     //        return new ConcurrentMapCacheServiceImpl();
     //    }
 
-    @Bean
-    RedisCacheServiceImpl redisCacheService() {
-        return new RedisCacheServiceImpl();
-    }
+//    @Bean
+//    RedisCacheServiceImpl redisCacheService() {
+//        return new RedisCacheServiceImpl();
+//    }
+//
+//    @Bean
+//    AbstractExpireManager cacheManager(RedisCacheServiceImpl service) {
+//        return new ImportedExpireManager(service, new RedisExpiredImpl());
+//    }
+//
+//    @Bean(AbstractExpiredHybridCacheManager.GLOBAL_LOCK)
+//    IReadWriteLock readWriteLock(RedissonClient redissonClient) {
+//        return new ReadWriteLockAdapter(redissonClient.getReadWriteLock("simpleReadWriteLock"));
+//    }
 
-    @Bean
-    AbstractExpireManager cacheManager(RedisCacheServiceImpl service) {
-        return new ImportedExpireManager(service, new RedisExpiredImpl());
-    }
-
-    @Bean(AbstractExpiredHybridCacheManager.GLOBAL_LOCK)
-    IReadWriteLock readWriteLock(RedissonClient redissonClient) {
-        return new ReadWriteLockAdapter(redissonClient.getReadWriteLock("simpleReadWriteLock"));
-    }
-
-    @Bean
-    IDebounce debounce(AbstractExpireManager expireManager, AuthProperty authProperty) {
-        return new CacheDebounce(expireManager, authProperty.getApiColdDownTime());
-    }
+//    @Bean
+//    IDebounce debounce(AbstractExpireManager expireManager, AuthProperty authProperty) {
+//        return new CacheDebounce(expireManager, authProperty.getApiColdDownTime());
+//    }
 }

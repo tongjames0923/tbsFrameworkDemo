@@ -5,14 +5,12 @@ import com.alibaba.fastjson2.JSON;
 import lombok.Data;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
-import tbs.framework.auth.annotations.ApplyRuntimeData;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.base.interfaces.impls.chain.AbstractChain;
 import tbs.framework.base.interfaces.impls.chain.AbstractCollectiveChain;
 import tbs.framework.base.structs.ITree;
 import tbs.framework.base.structs.impls.SimpleMultibranchTree;
 import tbs.framework.base.structs.impls.TreeUtil;
-import tbs.framework.cache.managers.AbstractExpireManager;
 import tbs.framework.log.ILogger;
 import tbs.framework.log.annotations.AutoLogger;
 import tbs.framework.mq.center.AbstractMessageCenter;
@@ -28,7 +26,6 @@ import tbs.framework.utils.UuidUtil;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
-import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
@@ -64,40 +61,40 @@ public class Controller {
     @Resource
     RuntimeData runtimeData;
 
-    @Resource
-    AbstractExpireManager cacheService;
-
-    @RequestMapping(value = "put", method = RequestMethod.GET)
-    @ApplyRuntimeData
-    public Result put(@RequestParam final String key, @RequestParam final String value, @RequestParam final long exp) {
-        this.cacheService.put(key, value, true);
-        if (0 < exp) {
-            this.cacheService.expire(key, Duration.ofSeconds(exp));
-        }
-        return new Result("", 1, 0, null, null, null);
-    }
-
-    @RequestMapping(value = "get", method = RequestMethod.GET)
-    @ApplyRuntimeData
-    public Result get(@RequestParam final String key) {
-        return new Result("", 1, 0,
-            Optional.ofNullable(this.cacheService.getAndRemove(key, Duration.ofSeconds(5))).orElse("null"), null, null);
-    }
-
-    //    @RequestMapping(value = "remain", method = RequestMethod.GET)
-    //    @ApplyRuntimeData
-    //    public Result remain(@RequestParam final String key) {
-    //
-    //        return new Result(String.valueOf(this.cacheService.remaining(key)), 0, 0, this.asyncTest.testModel(), null,
-    //            null);
-    //    }
-    //
-    //    @RequestMapping(value = "remove", method = RequestMethod.GET)
-    //    @ApplyRuntimeData
-    //    public Result remove(@RequestParam final String key) {
-    //        this.cacheService.remove(key);
-    //        return new Result("", 0, 0, this.asyncTest.testModel(), null, null);
-    //    }
+//    @Resource
+//    AbstractExpireManager cacheService;
+//
+//    @RequestMapping(value = "put", method = RequestMethod.GET)
+//    @ApplyRuntimeData
+//    public Result put(@RequestParam final String key, @RequestParam final String value, @RequestParam final long exp) {
+//        this.cacheService.put(key, value, true);
+//        if (0 < exp) {
+//            this.cacheService.expire(key, Duration.ofSeconds(exp));
+//        }
+//        return new Result("", 1, 0, null, null, null);
+//    }
+//
+//    @RequestMapping(value = "get", method = RequestMethod.GET)
+//    @ApplyRuntimeData
+//    public Result get(@RequestParam final String key) {
+//        return new Result("", 1, 0,
+//            Optional.ofNullable(this.cacheService.getAndRemove(key, Duration.ofSeconds(5))).orElse("null"), null, null);
+//    }
+//
+//    //    @RequestMapping(value = "remain", method = RequestMethod.GET)
+//    //    @ApplyRuntimeData
+//    //    public Result remain(@RequestParam final String key) {
+//    //
+//    //        return new Result(String.valueOf(this.cacheService.remaining(key)), 0, 0, this.asyncTest.testModel(), null,
+//    //            null);
+//    //    }
+//    //
+//    //    @RequestMapping(value = "remove", method = RequestMethod.GET)
+//    //    @ApplyRuntimeData
+//    //    public Result remove(@RequestParam final String key) {
+//    //        this.cacheService.remove(key);
+//    //        return new Result("", 0, 0, this.asyncTest.testModel(), null, null);
+//    //    }
 
     @Resource
     LoginInfoMapper loginInfoMapper;
@@ -142,46 +139,46 @@ public class Controller {
             null)).collectFromChain();
     }
 
-    int cnt = 0;
-
-    @RequestMapping(value = "testWriteReadLock", method = RequestMethod.GET)
-    public void testWriteReadLock() throws InterruptedException {
-        cnt++;
-        for (int i = 0; i < 1; i++) {
-            ThreadUtil.getInstance().runCollectionInBackground(() -> {
-                for (int j = 0; j < 100; j++) {
-                    try {
-                        asyncTest.testWrite();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
-        }
-
-        for (int i = 0; i < 1; i++) {
-            ThreadUtil.getInstance().runCollectionInBackground(() -> {
-                int oldv = -1;
-                while (true) {
-                    try {
-                        int v = asyncTest.testRead();
-                        //                        if (v != oldv) {
-                        synchronized (this) {
-                            oldv = v;
-                            autoLogger.warn("Read!:{}", v);
-                            //                            }
-                        }
-
-                        if (v >= cnt * 100) {
-                            break;
-                        }
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
-        }
-    }
+//    int cnt = 0;
+//
+//    @RequestMapping(value = "testWriteReadLock", method = RequestMethod.GET)
+//    public void testWriteReadLock() throws InterruptedException {
+//        cnt++;
+//        for (int i = 0; i < 1; i++) {
+//            ThreadUtil.getInstance().runCollectionInBackground(() -> {
+//                for (int j = 0; j < 100; j++) {
+//                    try {
+//                        asyncTest.testWrite();
+//                    } catch (InterruptedException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }
+//            });
+//        }
+//
+//        for (int i = 0; i < 1; i++) {
+//            ThreadUtil.getInstance().runCollectionInBackground(() -> {
+//                int oldv = -1;
+//                while (true) {
+//                    try {
+//                        int v = asyncTest.testRead();
+//                        //                        if (v != oldv) {
+//                        synchronized (this) {
+//                            oldv = v;
+//                            autoLogger.warn("Read!:{}", v);
+//                            //                            }
+//                        }
+//
+//                        if (v >= cnt * 100) {
+//                            break;
+//                        }
+//                    } catch (InterruptedException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }
+//            });
+//        }
+//    }
 
     @RequestMapping(value = "testCache", method = RequestMethod.GET)
     public String cacheTest(int id) throws Exception {

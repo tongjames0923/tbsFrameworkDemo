@@ -18,7 +18,7 @@ tbs:
         [
           "/api/**"
         ]
-      api-cold-down-time: 200
+      api-cold-down-time: 5000
     swagger:
       base-package: com.example.demo
     sql:
@@ -38,7 +38,7 @@ tbs:
 
     async:
       task:
-        receipt-broker: tbs.framework.cache.impls.CachedAsyncReceiptBroker
+        receipt-broker: tbs.framework.async.task.consumers.LogBroker
         receipt-timeout: 30
     cache:
       cache-service-class: tbs.framework.redis.cache.impls.services.RedisCacheServiceImpl
