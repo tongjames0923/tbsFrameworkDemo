@@ -74,5 +74,5 @@ mybatis:
     log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
 logging:
   level:
-    tbs.framework: trace
+    tbs.framework: info
     com.example.demo: debug

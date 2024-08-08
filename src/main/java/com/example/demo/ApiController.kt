@@ -5,9 +5,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import tbs.framework.auth.annotations.Debounce
 import tbs.framework.auth.annotations.PermissionValidated
-import tbs.framework.auth.interfaces.debounce.impls.AESTokenDebounce
-import tbs.framework.auth.model.RuntimeData
-import javax.annotation.Resource
 
 /**
  * @author Abstergo
@@ -23,18 +20,18 @@ class ApiController {
         return "Hello World a"
     }
 
-    @Resource
-    lateinit var aesTokenDebounce: AESTokenDebounce;
-
-    @GetMapping("getDebounce")
-    fun getDebounce(url: String): String {
-        return aesTokenDebounce.generateToken(
-            AESTokenDebounce.DebounceInfo(
-                RuntimeData.getInstance().userModel.userId,
-                url
-            )
-        );
-    }
+//    @Resource
+//    lateinit var aesTokenDebounce: AESTokenDebounce;
+//
+//    @GetMapping("getDebounce")
+//    fun getDebounce(url: String): String {
+//        return aesTokenDebounce.generateToken(
+//            AESTokenDebounce.DebounceInfo(
+//                RuntimeData.getInstance().userModel.userId,
+//                url
+//            )
+//        );
+//    }
 
     @RequestMapping("b")
     @PermissionValidated("PASS")
