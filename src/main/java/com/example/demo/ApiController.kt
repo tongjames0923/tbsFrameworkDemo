@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import tbs.framework.auth.annotations.Debounce
-import tbs.framework.auth.annotations.PermissionValidated
 
 /**
  * @author Abstergo
@@ -12,13 +11,20 @@ import tbs.framework.auth.annotations.PermissionValidated
 @RestController
 @RequestMapping("/api")
 class ApiController {
-    @DbPermission
-    @PermissionValidated("70", "66")
+    @DbPermission("70", "66")
     @GetMapping("a")
     @Debounce
     fun a(): String {
         return "Hello World a"
     }
+
+    @DbPermission("70", "66")
+    @GetMapping("b")
+    @Debounce
+    fun b(p: Int): String {
+        return "Hello World a" + p;
+    }
+
 
 //    @Resource
 //    lateinit var aesTokenDebounce: AESTokenDebounce;
@@ -33,15 +39,4 @@ class ApiController {
 //        );
 //    }
 
-    @RequestMapping("b")
-    @PermissionValidated("PASS")
-    fun b(): String {
-        return "Hello World b"
-    }
-
-    @RequestMapping("c")
-    @PermissionValidated("NOT PASS")
-    fun c(): String {
-        return "Hello World c"
-    }
 }

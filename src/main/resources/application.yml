@@ -18,7 +18,11 @@ tbs:
         [
           "/api/**"
         ]
-      api-cold-down-time: 5000
+      debounce:
+        api-cold-down-time: 15000
+        debounce-path-pattern: [
+          "/api/**"
+        ]
     swagger:
       base-package: com.example.demo
     sql:
@@ -74,5 +78,5 @@ mybatis:
     log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
 logging:
   level:
-    tbs.framework: info
+    tbs.framework: trace
     com.example.demo: debug

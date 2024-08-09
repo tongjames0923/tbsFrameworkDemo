@@ -13,6 +13,7 @@ import tbs.framework.auth.interfaces.token.IUserModelPicker;
 import tbs.framework.auth.model.RuntimeData;
 import tbs.framework.auth.model.UserModel;
 import tbs.framework.auth.properties.AuthProperty;
+import tbs.framework.auth.properties.DebounceProperty;
 import tbs.framework.base.utils.LogFactory;
 import tbs.framework.cache.annotations.CacheLoading;
 import tbs.framework.cache.annotations.CacheUnloading;
@@ -289,7 +290,8 @@ public class Config {
 //    }
 
     @Bean
-    IDebounce debounce(AbstractExpireManager expireManager, AuthProperty authProperty) {
-        return new CacheDebounce(expireManager, authProperty.getApiColdDownTime());
+    IDebounce debounce(AbstractExpireManager expireManager, AuthProperty authProperty,
+        DebounceProperty debounceProperty) {
+        return new CacheDebounce(expireManager, debounceProperty.getApiColdDownTime());
     }
 }
