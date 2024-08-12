@@ -133,6 +133,14 @@ public class Controller {
         return builder.build();
     }
 
+    @Resource
+    HomeMemberMapper memberMapper;
+
+    @PostMapping("testDto")
+    public List<HomeMemberDTO> listdto(@RequestBody HomeMemeberQO qo) {
+        return memberMapper.queryByQO(qo, null);
+    }
+
     @RequestMapping(value = "testChain", method = RequestMethod.GET)
     public List<Integer> test() {
         return ((AbstractCollectiveChain<Void, Integer>)ChainUtil.processForChain(range(0, 100),
