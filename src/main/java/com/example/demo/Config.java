@@ -61,6 +61,7 @@ public class Config {
     IMessageConsumer consumer1() {
         return new IMessageConsumer() {
 
+            @AutoLogger
             ILogger logger = null;
 
             private AtomicLong cnt = new AtomicLong(0);
@@ -283,11 +284,11 @@ public class Config {
     AbstractExpireManager cacheManager(RedisCacheServiceImpl service) {
         return new ImportedExpireManager(service, new RedisExpiredImpl());
     }
-//
-//    @Bean(AbstractExpiredHybridCacheManager.GLOBAL_LOCK)
-//    IReadWriteLock readWriteLock(RedissonClient redissonClient) {
-//        return new ReadWriteLockAdapter(redissonClient.getReadWriteLock("simpleReadWriteLock"));
-//    }
+    //
+    //    @Bean(AbstractExpiredHybridCacheManager.GLOBAL_LOCK)
+    //    IReadWriteLock readWriteLock(RedissonClient redissonClient) {
+    //        return new ReadWriteLockAdapter(redissonClient.getReadWriteLock("simpleReadWriteLock"));
+    //    }
 
     @Bean
     IDebounce debounce(AbstractExpireManager expireManager, AuthProperty authProperty,
