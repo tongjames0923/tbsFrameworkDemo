@@ -2,6 +2,7 @@ package com.example.demo;
 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import tbs.framework.base.annotations.MethodIntercept;
 import tbs.framework.base.constants.BeanNameConstant;
 import tbs.framework.cache.annotations.CacheLoading;
 import tbs.framework.cache.annotations.CacheUnloading;
@@ -17,6 +18,7 @@ import javax.annotation.Resource;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
+@MethodIntercept(LogMethodIntercept.class)
 @Component
 public class AsyncTest {
 
@@ -60,6 +62,7 @@ public class AsyncTest {
 //        logger.info("write end");
 //    }
 
+    @MethodIntercept
     @CacheUnloading(key = "#method.#args[0]", intArgs = 20000)
     @CacheLoading(key = "#method.#args[0]")
     public String testCache(int id) throws InterruptedException {
