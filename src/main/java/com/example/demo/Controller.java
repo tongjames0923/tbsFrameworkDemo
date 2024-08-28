@@ -6,6 +6,8 @@ import lombok.Data;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 import tbs.framework.auth.model.RuntimeData;
+import tbs.framework.base.interfaces.IInterceptedTarget;
+import tbs.framework.base.interfaces.IMethodInterceptHandler;
 import tbs.framework.base.interfaces.impls.chain.AbstractChain;
 import tbs.framework.base.interfaces.impls.chain.AbstractCollectiveChain;
 import tbs.framework.base.structs.ITree;
@@ -34,7 +36,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author abstergo
  */
 @RestController
-public class Controller {
+public class Controller implements IInterceptedTarget {
 
     @Resource
     LockProxy lockProxy;
@@ -104,6 +106,14 @@ public class Controller {
     @RequestMapping("testTransication")
     public TestModel testTransication(String text) {
         return asyncTest.testModel(text);
+    }
+
+    @Resource
+    private LogMethodIntercept controllerHandler;
+
+    @Override
+    public List<IMethodInterceptHandler> handlers() {
+        return Arrays.asList(controllerHandler);
     }
 
     static class RangeChain extends AbstractCollectiveChain<Void, Integer> {

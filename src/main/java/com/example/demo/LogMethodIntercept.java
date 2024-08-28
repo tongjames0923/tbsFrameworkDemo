@@ -20,15 +20,10 @@ public class LogMethodIntercept implements IMethodInterceptHandler {
     }
 
     @Override
-    public void handleException(@NotNull Throwable e, @NotNull Object target, @NotNull Method method,
-        @NotNull Object... args) {
-
-    }
-
-    @Override
     public HandleReturnedResult handleReturn(@NotNull Object target, @NotNull Method method, Object result,
         @NotNull Object... args) {
-        logger.info("Method: " + method.getName() + " returned: " + result);
+        logger.info(
+            "Method: " + method.getDeclaringClass().getName() + "." + method.getName() + " returned: " + result);
         return HandleReturnedResult.finalResult(result);
     }
 }

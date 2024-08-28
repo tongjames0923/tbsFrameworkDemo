@@ -18,7 +18,6 @@ import javax.annotation.Resource;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
-@MethodIntercept(LogMethodIntercept.class)
 @Component
 public class AsyncTest {
 
@@ -62,7 +61,7 @@ public class AsyncTest {
 //        logger.info("write end");
 //    }
 
-    @MethodIntercept
+    @MethodIntercept(LogMethodIntercept.class)
     @CacheUnloading(key = "#method.#args[0]", intArgs = 20000)
     @CacheLoading(key = "#method.#args[0]")
     public String testCache(int id) throws InterruptedException {
